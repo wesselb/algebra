@@ -48,7 +48,7 @@ def broadcast(op, xs, ys):
 
     Returns:
         tuple: Result of applying `op` to every element of `zip(xs, ys)` after
-        broadcasting appropriately.
+            broadcasting appropriately.
     """
     if len(xs) == 1 and len(ys) > 1:
         # Broadcast `xs`.
