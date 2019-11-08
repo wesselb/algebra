@@ -21,7 +21,7 @@ def add(a, b):
     if b is 0:
         return a
     else:
-        return new(a, Sum)(a, mul(b, new(a, One)()))
+        return add(a, mul(b, new(a, One)()))
 
 
 @_dispatch(object, Element)
@@ -29,7 +29,7 @@ def add(a, b):
     if a is 0:
         return b
     else:
-        return new(b, Sum)(mul(a, new(b, One)()), b)
+        return add(mul(a, new(b, One)()), b)
 
 
 @_dispatch(Element, Element)
@@ -59,15 +59,18 @@ def add(a, b):
 
 
 @_dispatch(Zero, Zero, precedence=definite)
-def add(a, b): return a
+def add(a, b):
+    return a
 
 
 @_dispatch(Element, Zero, precedence=definite)
-def add(a, b): return a
+def add(a, b):
+    return a
 
 
 @_dispatch(Zero, Element, precedence=definite)
-def add(a, b): return b
+def add(a, b):
+    return b
 
 
 # Group factors and terms if possible.
