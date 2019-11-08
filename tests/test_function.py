@@ -5,13 +5,15 @@ from ring.function import (
     Function,
     OneFunction,
     ZeroFunction,
+    ReversedFunction,
     TensorProductFunction,
 
     stretch,
     shift,
     select,
     transform,
-    differentiate
+    differentiate,
+    reverse
 )
 
 
@@ -170,6 +172,49 @@ def test_tensor_product():
     assert TensorProductFunction(f1) != TensorProductFunction(f1, f2)
     assert TensorProductFunction(f1, f1) == TensorProductFunction(f1, f1)
     assert TensorProductFunction(f1, f2) == TensorProductFunction(f1, f2)
+
+
+def test_reverse():
+    def f1():
+        pass
+
+    def f2():
+        pass
+
+    with pytest.raises(RuntimeError):
+        reverse(1)
+
+    assert str(reverse(f)) == 'Reversed(f)'
+    assert str(reversed(f)) == 'Reversed(f)'
+
+    assert reverse(f) == reverse(f)
+    assert reverse(f) != reverse(g)
+
+    # Test cancellation.
+    assert str(reverse(one)) == '1'
+    assert str(reverse(zero)) == '0'
+
+    # Test propagation.
+    assert str(reverse(f + g)) == 'Reversed(f) + Reversed(g)'
+    assert str(reverse(f * g)) == 'Reversed(f) * Reversed(g)'
+    assert str(reverse(2 * f)) == '2 * Reversed(f)'
+
+    # Test synergy with other types.
+    assert str(reverse(reverse(f))) == 'f'
+    assert str(reverse(f.stretch(1, 2))) == 'Reversed(f) > (2, 1)'
+    assert str(reverse(f.shift(1, 2))) == 'Reversed(f) shift (2, 1)'
+    assert str(reverse(f.select(1, 2))) == 'Reversed(f) : ([2], [1])'
+    assert str(reverse(f.transform(f1, f2))) == 'Reversed(f) transform (f2, f1)'
+    assert str(reverse(f.diff(0, 1))) == 'd(1, 0) Reversed(f)'
+    assert str(reverse(TensorProductFunction(f1, f2))) == 'f2 x f1'
+
+    # Test parentheses.
+    assert str(ReversedFunction(ReversedFunction(f))) == \
+           'Reversed(Reversed(f))'
+    assert str(ReversedFunction(2 * f)) == 'Reversed(2 * f)'
+    assert str(ReversedFunction(f * g)) == 'Reversed(f * g)'
+    assert str(ReversedFunction(f + g)) == 'Reversed(f + g)'
+    assert str(ReversedFunction(f) * g) == 'Reversed(f) * g'
 
 
 def test_function_conversion():

@@ -7,6 +7,7 @@ from plum import Dispatcher, Self
 from . import _dispatch
 from .ring import (
     priority,
+    definite,
 
     Element,
     One,
@@ -38,6 +39,7 @@ __all__ = ['Function',
            'SelectedFunction',
            'InputTransformedFunction',
            'DerivativeFunction',
+           'ReversedFunction',
            'TensorProductFunction',
 
            'get_ring',
@@ -49,7 +51,8 @@ __all__ = ['Function',
            'shift',
            'select',
            'transform',
-           'differentiate']
+           'differentiate',
+           'reverse']
 
 
 class Function(Element):
@@ -120,6 +123,14 @@ class Function(Element):
             :class:`.function.Function`: Derivative of the Function.
         """
         return differentiate(self, *derivs)
+
+    def __reversed__(self):
+        """Reverse the arguments of a function.
+
+        Returns:
+            :class:`.function.Function`: Function with arguments reversed.
+        """
+        return reverse(self)
 
 
 # Register the ring.
@@ -237,7 +248,7 @@ class InputTransformedFunction(WrappedFunction):
     """Transform inputs of a function.
 
     Args:
-        e (:class:`.function.Function`): Function to wrap.
+        e (:class:`.function.Function`): Function to transform inputs of.
         *fs (tensor): Per input, the transformation. Set to `None` to not
             do a transformation.
     """
@@ -268,7 +279,7 @@ class DerivativeFunction(WrappedFunction):
     """Compute the derivative of a function.
 
     Args:
-        e (:class:`.function.Element`): Function to compute the
+        e (:class:`.function.Function`): Function to compute the
             derivative of.
         *derivs (tensor): Per input, the index of the dimension which to
             take the derivative of. Set to `None` to not take a derivative.
@@ -290,6 +301,35 @@ class DerivativeFunction(WrappedFunction):
     def __eq__(self, other):
         return self[0] == other[0] and \
                tuple_equal(self.derivs, other.derivs)
+
+
+class ReversedFunction(WrappedFunction):
+    """Function with arguments reversed.
+
+    Args:
+        e (:class:`.function.Function`): Function to reverse arguments of.
+    """
+    _dispatch = Dispatcher(in_class=Self)
+
+    def render_wrap(self, e, formatter):
+        return f'Reversed({e})'
+
+    @_dispatch(Self)
+    def __eq__(self, other):
+        return self[0] == other[0]
+
+
+# A reversed function will never need parentheses.
+
+@_dispatch(Function, ReversedFunction, precedence=definite)
+def need_parens(el, parent):
+    return False
+
+
+# Careful to break ambiguity with previous method.
+@_dispatch(ReversedFunction, Function, precedence=definite + 1)
+def need_parens(el, parent):
+    return False
 
 
 class TensorProductFunction(Function):
@@ -314,7 +354,10 @@ class TensorProductFunction(Function):
         return tuple_equal(self.fs, other.fs)
 
 
-@_dispatch(TensorProductFunction, Element, precedence=priority)
+# A tensor product function needs parentheses if and only if it has more than
+# one function.
+
+@_dispatch(TensorProductFunction, Element, precedence=definite)
 def need_parens(el, parent):
     return len(el.fs) > 1
 
@@ -334,12 +377,12 @@ def stretch(a, *stretches):
                               ''.format(type(a).__name__))
 
 
-@_dispatch(Element, [object])
+@_dispatch(Function, [object])
 def stretch(a, *stretches):
     return new(a, StretchedFunction)(a, *stretches)
 
 
-@_dispatch({Zero, One}, [object])
+@_dispatch({ZeroFunction, OneFunction}, [object])
 def stretch(a, *stretches):
     return a
 
@@ -364,12 +407,12 @@ def shift(a, *shifts):
                               ''.format(type(a).__name__))
 
 
-@_dispatch(Element, [object])
+@_dispatch(Function, [object])
 def shift(a, *shifts):
     return new(a, ShiftedFunction)(a, *shifts)
 
 
-@_dispatch({Zero, One}, [object])
+@_dispatch({ZeroFunction, OneFunction}, [object])
 def shift(a, *shifts):
     return a
 
@@ -396,12 +439,12 @@ def select(a, *dims):
                               ''.format(type(a).__name__))
 
 
-@_dispatch(Element, [object])
+@_dispatch(Function, [object])
 def select(a, *dims):
     return new(a, SelectedFunction)(a, *dims)
 
 
-@_dispatch({Zero, One}, [object])
+@_dispatch({ZeroFunction, OneFunction}, [object])
 def select(a, *dims):
     return a
 
@@ -423,12 +466,12 @@ def transform(a, *fs):
                               ''.format(type(a).__name__))
 
 
-@_dispatch(Element, [object])
+@_dispatch(Function, [object])
 def transform(a, *fs):
     return new(a, InputTransformedFunction)(a, *fs)
 
 
-@_dispatch({Zero, One}, [object])
+@_dispatch({ZeroFunction, OneFunction}, [object])
 def transform(a, *fs):
     return a
 
@@ -450,19 +493,97 @@ def differentiate(a, *derivs):
                               ''.format(type(a).__name__))
 
 
-@_dispatch(Element, [object])
+@_dispatch(Function, [object])
 def differentiate(a, *derivs):
     return new(a, DerivativeFunction)(a, *derivs)
 
 
-@_dispatch(Zero, [object])
+@_dispatch(ZeroFunction, [object])
 def differentiate(a, *derivs):
     return a
 
 
-@_dispatch(One, [object])
+@_dispatch(OneFunction, [object])
 def differentiate(a, *derivs):
     return new(a, Zero)()
+
+
+@_dispatch(object)
+def reverse(a):
+    """Reverse argument of a function.
+
+    Args:
+        a (:class:`.function.Function`): Function to reverse arguments of.
+
+    Returns:
+        :class:`.function.Function`: Function with arguments reversed.
+    """
+    raise NotImplementedError('Argument reversal not implemented for "{}".'
+                              ''.format(type(a).__name__))
+
+
+@_dispatch(Function)
+def reverse(a):
+    return new(a, ReversedFunction)(a)
+
+
+@_dispatch({ZeroFunction, OneFunction})
+def reverse(a):
+    return a
+
+
+# Propagate reversal.
+
+@_dispatch(SumFunction)
+def reverse(a):
+    return add(reverse(a[0]), reverse(a[1]))
+
+
+@_dispatch(ProductFunction)
+def reverse(a):
+    return mul(reverse(a[0]), reverse(a[1]))
+
+
+@_dispatch(ScaledFunction)
+def reverse(a):
+    return mul(a.scale, reverse(a[0]))
+
+
+# Let reversal synergise with wrapped kernels.
+
+@_dispatch(ReversedFunction)
+def reverse(a):
+    return a[0]
+
+
+@_dispatch(StretchedFunction)
+def reverse(a):
+    return stretch(reverse(a[0]), *reversed(a.stretches))
+
+
+@_dispatch(ShiftedFunction)
+def reverse(a):
+    return shift(reverse(a[0]), *reversed(a.shifts))
+
+
+@_dispatch(SelectedFunction)
+def reverse(a):
+    return select(reverse(a[0]), *reversed(a.dims))
+
+
+@_dispatch(InputTransformedFunction)
+def reverse(a):
+    return transform(reverse(a[0]), *reversed(a.fs))
+
+
+@_dispatch(DerivativeFunction)
+def reverse(a):
+    return differentiate(reverse(a[0]), *reversed(a.derivs))
+
+
+@_dispatch(TensorProductFunction)
+def reverse(a):
+    return TensorProductFunction(*reversed(a.fs))
 
 
 # Handle conversion of Python functions.
