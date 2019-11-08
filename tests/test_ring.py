@@ -19,30 +19,7 @@ from ring import (
 )
 from ring.pretty import need_parens
 
-
-class A(Element):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
-        return True
-
-
-class B(Element):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
-        return True
-
-
-class C(Element):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
-        return True
-
+from .util import A, B, C
 
 def test_equality_element():
     assert Element() != Element()
