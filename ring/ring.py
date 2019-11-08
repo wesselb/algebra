@@ -144,6 +144,19 @@ class Element(metaclass=Referentiable(ABCMeta)):
 
     @_dispatch(Formatter)
     def render(self, formatter):
+        """Render the element.
+
+        This is the lowest-level operation in  pretty printing an element,
+        and should produce a string representation of the element. This
+        method should be implemented to determine how to render a custom
+        element.
+
+        Args:
+            formatter (function, optional): Function to format values.
+
+        Returns:
+            str: Rendering of the element.
+        """
         return f'{self.__name__}()'
 
 
