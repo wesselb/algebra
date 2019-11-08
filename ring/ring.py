@@ -142,7 +142,6 @@ class Element(metaclass=Referentiable(ABCMeta)):
     def display(self):
         return self.display(lambda x: x)
 
-    @_dispatch(Formatter)
     def render(self, formatter):
         """Render the element.
 
@@ -164,7 +163,6 @@ class One(Element):
     """The constant `1`."""
     _dispatch = Dispatcher(in_class=Self)
 
-    @_dispatch(Formatter)
     def render(self, formatter):
         return '1'
 
@@ -177,7 +175,6 @@ class Zero(Element):
     """The constant `0`."""
     _dispatch = Dispatcher(in_class=Self)
 
-    @_dispatch(Formatter)
     def render(self, formatter):
         return '0'
 
@@ -204,10 +201,8 @@ class Wrapped(Element):
             raise IndexError('Index out of range.')
 
     @abstractmethod
-    @_dispatch(object, Formatter)
-    def render(self, e, formatter):
-        raise RuntimeError(f'Cannot display instances of type '
-                           f'"{type(self).__name__}".')
+    def render_wrap(self, e, formatter):  # pragma: no cover
+        pass
 
 
 class Join(Element):
@@ -231,10 +226,9 @@ class Join(Element):
         else:
             raise IndexError('Index out of range.')
 
-    @_dispatch(object, object, Formatter)
-    def render(self, e1, e2, formatter):
-        raise RuntimeError(f'Cannot display instances of type '
-                           f'"{type(self).__name__}".')
+    @abstractmethod
+    def render_join(self, e1, e2, formatter):  # pragma: no cover
+        pass
 
 
 class Scaled(Wrapped):
@@ -254,8 +248,7 @@ class Scaled(Wrapped):
     def num_factors(self):
         return self[0].num_factors + 1
 
-    @_dispatch(object, Formatter)
-    def render(self, e, formatter):
+    def render_wrap(self, e, formatter):
         return f'{formatter(self.scale)} * {e}'
 
     def factor(self, i):
@@ -285,8 +278,7 @@ class Product(Join):
         else:
             return self[1].factor(i - self[0].num_factors)
 
-    @_dispatch(object, object, Formatter)
-    def render(self, e1, e2, formatter):
+    def render_join(self, e1, e2, formatter):
         return f'{e1} * {e2}'
 
     @_dispatch(Self)
@@ -311,8 +303,7 @@ class Sum(Join):
         else:
             return self[1].term(i - self[0].num_terms)
 
-    @_dispatch(object, object, Formatter)
-    def render(self, e1, e2, formatter):
+    def render_join(self, e1, e2, formatter):
         return f'{e1} + {e2}'
 
     @_dispatch(Self)
@@ -402,8 +393,14 @@ def new(a, t):
         return new_cache[type(a), t]
     except KeyError:
         ring = get_ring(a)
-        candidates = list(set(get_subclasses(ring)) &
-                          ({t} | set(get_subclasses(t))))
+
+        # Determine candidates.
+        ring_types = set(get_subclasses(ring))
+        element_types = {t} | set(get_subclasses(t))
+        candidates = list(ring_types & element_types)
+
+        # The most specific types are the ones we are looking for.
+        candidates = filter_most_specific(candidates)
 
         # There should only be a single candidate.
         if len(candidates) != 1:
@@ -412,3 +409,27 @@ def new(a, t):
 
         new_cache[type(a), t] = candidates[0]
         return new_cache[type(a), t]
+
+
+def filter_most_specific(types):
+    """From a list of types, determine the most specific ones.
+
+    Args:
+        types (list[type]): List of types.
+
+    Returns:
+        list[type]: Most specific types in `types`.
+    """
+    filtered_types = []
+
+    while len(types) > 0:
+        t, types = types[0], types[1:]
+
+        # If `t` is a supertype, discard it. Otherwise, keep it.
+        if not (
+                any(issubclass(u, t) for u in types) or
+                any(issubclass(u, t) for u in filtered_types)
+        ):
+            filtered_types.append(t)
+
+    return filtered_types

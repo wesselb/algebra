@@ -16,13 +16,13 @@ __all__ = []
 
 @_dispatch(Wrapped, Formatter)
 def pretty_print(el, formatter):
-    return el.render(pretty_print(el[0], el, formatter), formatter)
+    return el.render_wrap(pretty_print(el[0], el, formatter), formatter)
 
 
 @_dispatch(Join, Formatter)
 def pretty_print(el, formatter):
-    return el.render(pretty_print(el[0], el, formatter),
-                     pretty_print(el[1], el, formatter), formatter)
+    return el.render_join(pretty_print(el[0], el, formatter),
+                          pretty_print(el[1], el, formatter), formatter)
 
 
 @_dispatch(Element, Element, Formatter)
@@ -42,7 +42,7 @@ def need_parens(el, parent):
         parent (:class:`.field.Element`): Parent of element to print.
 
     Returns:
-        bool: Boolean whether `el` needs parentheses.
+        bool: Boolean indicating whether `el` needs parentheses.
     """
     return False
 

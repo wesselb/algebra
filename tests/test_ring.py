@@ -1,5 +1,5 @@
 import pytest
-from plum import Self, Dispatcher, NotFoundLookupError
+from plum import NotFoundLookupError
 
 from ring import (
     Element,
@@ -17,9 +17,9 @@ from ring import (
     get_ring,
     new
 )
-from ring.pretty import need_parens
-
+from ring.ring import filter_most_specific
 from .util import A, B, C
+
 
 def test_equality_element():
     assert Element() != Element()
@@ -149,25 +149,6 @@ def test_display_formatter():
            '9 * (Element() + 16 * 1)'
 
 
-def test_wrapepd_display_fallback():
-    class MyWrapped(Wrapped):
-        pass
-
-    with pytest.raises(RuntimeError):
-        MyWrapped(Element()).display()
-
-
-def test_join_display_fallback():
-    class MyJoin(Join):
-        pass
-
-    # Require parentheses.
-    need_parens.extend(Element, MyJoin)(lambda el, parent: True)
-
-    with pytest.raises(RuntimeError):
-        MyJoin(Element(), Element()).display()
-
-
 def test_add_fallback():
     with pytest.raises(RuntimeError):
         add('1', '2')
@@ -204,3 +185,19 @@ def test_new():
     # Test the creation of a sum type, which should fail.
     with pytest.raises(RuntimeError):
         new(Kernel(), Product)
+
+
+def test_filter_most_specific():
+    class T1:
+        pass
+
+    class T2(T1):
+        pass
+
+    assert set(filter_most_specific([int, str])) == {int, str}
+    assert set(filter_most_specific([int, str, object])) == {int, str}
+    assert set(filter_most_specific([int, object, str])) == {int, str}
+    assert set(filter_most_specific([T1, T2])) == {T2}
+    assert set(filter_most_specific([T2, T1])) == {T2}
+    assert set(filter_most_specific([int, T1, object, str, T2])) == \
+           {int, str, T2}
