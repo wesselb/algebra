@@ -5,9 +5,9 @@ from ring import Element
 
 __all__ = ['allclose',
            'approx',
-           'A',
-           'B',
-           'C']
+           'a',
+           'b',
+           'c']
 
 allclose = assert_allclose
 approx = assert_array_almost_equal
@@ -22,6 +22,12 @@ class A(Element):
     def __eq__(self, other):
         return True
 
+    def render(self, formatter):
+        return 'a'
+
+
+a = A()
+
 
 class B(Element):
     dispatch = Dispatcher(in_class=Self)
@@ -30,6 +36,12 @@ class B(Element):
     def __eq__(self, other):
         return True
 
+    def render(self, formatter):
+        return 'b'
+
+
+b = B()
+
 
 class C(Element):
     dispatch = Dispatcher(in_class=Self)
@@ -37,3 +49,9 @@ class C(Element):
     @dispatch(Self)
     def __eq__(self, other):
         return True
+
+    def render(self, formatter):
+        return 'c'
+
+
+c = C()

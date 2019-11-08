@@ -2,32 +2,32 @@ import pytest
 
 from ring import Scaled, Product
 
-from .util import A, B
+from .util import a, b
 
 
 @pytest.mark.parametrize('e, result', [
-    (A() + A() * B(),
-     'A() + A() * B()'),
+    (a + a * b,
+     'a + a * b'),
 
-    (A() + (A() * B() + 2 * A()),
-     'A() + A() * B() + 2 * A()'),
+    (a + (a * b + 2 * a),
+     'a + a * b + 2 * a'),
 
-    (A() + 4 * (A() * B() + 2 * A()),
-     'A() + 4 * (A() * B() + 2 * A())'),
+    (a + 4 * (a * b + 2 * a),
+     'a + 4 * (a * b + 2 * a)'),
 
-    (2 * (A() + B()),
-     '2 * (A() + B())'),
+    (2 * (a + b),
+     '2 * (a + b)'),
 
-    ((A() + B()) * (A() + B()),
-     '(A() + B()) * (A() + B())'),
+    ((a + b) * (a + b),
+     '(a + b) * (a + b)'),
 
-    ((A() + B()) * (A() + B()) + A(),
-     '(A() + B()) * (A() + B()) + A()'),
+    ((a + b) * (a + b) + a,
+     '(a + b) * (a + b) + a'),
 
     # I'm not sure if the below can ever be constructed, but it should be
     # handled sensibly.
-    (Product(Scaled(A(), 2), A() * B()),
-     '2 * A() * A() * B()')
+    (Product(Scaled(a, 2), a * b),
+     '2 * a * a * b')
 ])
 def test_pretty_printing(e, result):
     assert str(e) == result

@@ -18,7 +18,7 @@ from ring import (
     new
 )
 from ring.ring import filter_most_specific
-from .util import A, B, C
+from .util import a, b, c
 
 
 def test_equality_element():
@@ -50,96 +50,96 @@ def test_equality_sum():
 
 
 def test_addition():
-    assert str(A() + 1) == 'A() + 1'
-    assert str(1 + A()) == '1 + A()'
+    assert str(a + 1) == 'a + 1'
+    assert str(1 + a) == '1 + a'
 
 
 def test_subtraction():
-    assert str(1 - A()) == '1 + -1 * A()'
-    assert str(A() - 1) == 'A() + -1 * 1'
-    assert str(A() - A()) == '0'
-    assert str(B() - A()) == 'B() + -1 * A()'
+    assert str(1 - a) == '1 + -1 * a'
+    assert str(a - 1) == 'a + -1 * 1'
+    assert str(a - a) == '0'
+    assert str(b - a) == 'b + -1 * a'
 
 
 def test_negation():
-    assert str(-A()) == '-1 * A()'
+    assert str(-a) == '-1 * a'
 
 
 def test_name():
-    assert A.__name__ == 'A'
+    assert a.__name__ == 'A'
 
 
 def test_str():
-    assert str(1 - A()) == '1 + -1 * A()'
+    assert str(1 - a) == '1 + -1 * a'
 
 
 def test_repr():
-    assert repr(1 - A()) == '1 + -1 * A()'
+    assert repr(1 - a) == '1 + -1 * a'
 
 
 def test_power():
     with pytest.raises(ValueError):
-        A() ** -1
+        a ** -1
     with pytest.raises(NotFoundLookupError):
-        A() ** .5
-    assert str(A() ** 0) == '1'
-    assert str(A() ** 1) == 'A()'
-    assert str(A() ** 2) == 'A() * A()'
-    assert str(A() ** 3) == 'A() * A() * A()'
+        a ** .5
+    assert str(a ** 0) == '1'
+    assert str(a ** 1) == 'a'
+    assert str(a ** 2) == 'a * a'
+    assert str(a ** 3) == 'a * a * a'
 
 
 def test_terms():
-    e = A() + A() * B() + C() * C() + B()
+    e = a + a * b + c * c + b
     assert e.num_terms == 4
-    assert str(e.term(0)) == 'A()'
-    assert str(e.term(1)) == 'A() * B()'
-    assert str(e.term(2)) == 'C() * C()'
-    assert str(e.term(3)) == 'B()'
+    assert str(e.term(0)) == 'a'
+    assert str(e.term(1)) == 'a * b'
+    assert str(e.term(2)) == 'c * c'
+    assert str(e.term(3)) == 'b'
     with pytest.raises(IndexError):
         e.term(4)
     with pytest.raises(IndexError):
-        A().term(1)
+        a.term(1)
 
 
 def test_factors():
-    e = A() * B()
+    e = a * b
     assert e.num_factors == 2
-    assert str(e.factor(0)) == 'A()'
-    assert str(e.factor(1)) == 'B()'
+    assert str(e.factor(0)) == 'a'
+    assert str(e.factor(1)) == 'b'
     with pytest.raises(IndexError):
         e.factor(2)
 
-    e = (A() + A()) * C() * (B() + C())
+    e = (a + a) * c * (b + c)
     assert e.num_factors == 4
     assert str(e.factor(0)) == '2'
-    assert str(e.factor(1)) == 'A()'
-    assert str(e.factor(2)) == 'C()'
-    assert str(e.factor(3)) == 'B() + C()'
+    assert str(e.factor(1)) == 'a'
+    assert str(e.factor(2)) == 'c'
+    assert str(e.factor(3)) == 'b + c'
     with pytest.raises(IndexError):
         e.factor(4)
     with pytest.raises(IndexError):
-        A().factor(1)
+        a.factor(1)
 
 
 def test_indexing_wrapped():
-    e = 5 * A()
-    assert str(e[0]) == 'A()'
+    e = 5 * a
+    assert str(e[0]) == 'a'
     with pytest.raises(IndexError):
         e[1]
 
 
 def test_indexing_sum():
-    e = A() + B()
-    assert str(e[0]) == 'A()'
-    assert str(e[1]) == 'B()'
+    e = a + b
+    assert str(e[0]) == 'a'
+    assert str(e[1]) == 'b'
     with pytest.raises(IndexError):
         e[2]
 
 
 def test_indexing_product():
-    e = A() * B()
-    assert str(e[0]) == 'A()'
-    assert str(e[1]) == 'B()'
+    e = a * b
+    assert str(e[0]) == 'a'
+    assert str(e[1]) == 'b'
     with pytest.raises(IndexError):
         e[2]
 
