@@ -156,7 +156,7 @@ def test_tensor_product():
 
     assert str(TensorProductFunction(f1)) == 'f1'
     assert str(TensorProductFunction(f1, f2)) == 'f1 x f2'
-    
+
     assert str(2 * TensorProductFunction(f1, f2)) == '2 * (f1 x f2)'
     assert str(1 + TensorProductFunction(f1, f2)) == '1 + (f1 x f2)'
 
