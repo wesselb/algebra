@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 from plum import Dispatcher, Referentiable, Self
+from lab import B
 
 from . import _dispatch
 from .util import get_subclasses
@@ -65,6 +66,18 @@ class Element(metaclass=Referentiable(ABCMeta)):
     def __rsub__(self, other):
         return add(other, -self)
 
+    @_dispatch(int)
+    def __pow__(self, power, modulo=None):
+        if power < 0:
+            raise ValueError('Cannot raise to a negative power.')
+        elif power == 0:
+            return 1
+        else:
+            k = self
+            for _ in range(power - 1):
+                k *= self
+        return k
+
     @property
     def num_terms(self):
         """Number of terms"""
@@ -123,17 +136,15 @@ class Element(metaclass=Referentiable(ABCMeta)):
         Returns:
             str: Element as a string.
         """
-        # Due to multiple inheritance, we might arrive here before arriving at a
-        # method in the appropriate subclass. The only case to consider is if
-        # we're not in a leaf.
-        if isinstance(self, (Join, Wrapped)):
-            return pretty_print(self, formatter)
-        else:
-            return self.__class__.__name__ + '()'
+        return pretty_print(self, formatter)
 
     @_dispatch()
     def display(self):
         return self.display(lambda x: x)
+
+    @_dispatch(Formatter)
+    def render(self, formatter):
+        return f'{self.__name__}()'
 
 
 class One(Element):
@@ -141,7 +152,7 @@ class One(Element):
     _dispatch = Dispatcher(in_class=Self)
 
     @_dispatch(Formatter)
-    def display(self, formatter):
+    def render(self, formatter):
         return '1'
 
     @_dispatch(Self)
@@ -154,7 +165,7 @@ class Zero(Element):
     _dispatch = Dispatcher(in_class=Self)
 
     @_dispatch(Formatter)
-    def display(self, formatter):
+    def render(self, formatter):
         return '0'
 
     @_dispatch(Self)
@@ -181,8 +192,9 @@ class Wrapped(Element):
 
     @abstractmethod
     @_dispatch(object, Formatter)
-    def display(self, e, formatter):
-        raise RuntimeError(f'Cannot display instances of type "{type(self)}".')
+    def render(self, e, formatter):
+        raise RuntimeError(f'Cannot display instances of type '
+                           f'"{type(self).__name__}".')
 
 
 class Join(Element):
@@ -207,8 +219,9 @@ class Join(Element):
             raise IndexError('Index out of range.')
 
     @_dispatch(object, object, Formatter)
-    def display(self, e1, e2, formatter):
-        raise RuntimeError(f'Cannot display instances of type "{type(self)}".')
+    def render(self, e1, e2, formatter):
+        raise RuntimeError(f'Cannot display instances of type '
+                           f'"{type(self).__name__}".')
 
 
 class Scaled(Wrapped):
@@ -229,8 +242,8 @@ class Scaled(Wrapped):
         return self[0].num_factors + 1
 
     @_dispatch(object, Formatter)
-    def display(self, e, formatter):
-        return '{} * {}'.format(formatter(self.scale), e)
+    def render(self, e, formatter):
+        return f'{formatter(self.scale)} * {e}'
 
     def factor(self, i):
         if i >= self.num_factors:
@@ -240,7 +253,7 @@ class Scaled(Wrapped):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return False
+        return self[0] == other[0] and B.all(self.scale == other.scale)
 
 
 class Product(Join):
@@ -260,8 +273,8 @@ class Product(Join):
             return self[1].factor(i - self[0].num_factors)
 
     @_dispatch(object, object, Formatter)
-    def display(self, e1, e2, formatter):
-        return '{} * {}'.format(e1, e2)
+    def render(self, e1, e2, formatter):
+        return f'{e1} * {e2}'
 
     @_dispatch(Self)
     def __eq__(self, other):
@@ -286,8 +299,8 @@ class Sum(Join):
             return self[1].term(i - self[0].num_terms)
 
     @_dispatch(object, object, Formatter)
-    def display(self, e1, e2, formatter):
-        return '{} + {}'.format(e1, e2)
+    def render(self, e1, e2, formatter):
+        return f'{e1} + {e2}'
 
     @_dispatch(Self)
     def __eq__(self, other):
@@ -306,7 +319,7 @@ def pretty_print(el, formatter):
     Returns:
         str: `el` converted to string prettily.
     """
-    return el.display(formatter)
+    return el.render(formatter)
 
 
 @_dispatch(object, object)
@@ -320,8 +333,8 @@ def add(a, b):
     Returns:
         :class:`.ring.Element`: Sum of the elements.
     """
-    raise NotImplementedError('Addition not implemented for "{}" and "{}".'
-                              ''.format(type(a).__name__, type(b).__name__))
+    raise NotImplementedError(f'Addition not implemented for '
+                              f'"{type(a).__name__}" and "{type(b).__name__}".')
 
 
 @_dispatch(object, object)
@@ -335,8 +348,8 @@ def mul(a, b):
     Returns:
         :class:`.field.Element`: Product of the elements.
     """
-    raise NotImplementedError('Multiplication not implemented for "{}" and '
-                              '"{}"'.format(type(a).__name__, type(b).__name__))
+    raise NotImplementedError(f'Multiplication not implemented for '
+                              f'"{type(a).__name__}" and "{type(b).__name__}".')
 
 
 @_dispatch(object)
@@ -349,13 +362,14 @@ def get_ring(a):
     Returns:
         type: Ring of `a`.
     """
-    raise RuntimeError('Could not determine ring type of "{}".'
-                       ''.format(type(a).__name__))
+    raise RuntimeError(f'Could not determine ring type of '
+                       f'"{type(a).__name__}".')
 
 
 # Register the default ring.
 @_dispatch(Element)
-def get_ring(a): return Element
+def get_ring(a):
+    return Element
 
 
 new_cache = {}  #: Cache for `.ring.new`.
@@ -380,8 +394,8 @@ def new(a, t):
 
         # There should only be a single candidate.
         if len(candidates) != 1:
-            raise RuntimeError('Could not determine "{}" for ring "{}".'
-                               ''.format(t.__name__, ring.__name__))
+            raise RuntimeError(f'Could not determine "{t.__name__}" for ring '
+                               f'"{ring.__name__}".')
 
         new_cache[type(a), t] = candidates[0]
         return new_cache[type(a), t]
