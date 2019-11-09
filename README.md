@@ -14,11 +14,7 @@ Ring requires Python 3.6 or higher.
 pip install package
 ```
 
-## Basic Usage
+## Manual
 
-Like so:
+Coming soon.
 
-```python
->>> print('Hello, world!')
-Hello, world!
-```
