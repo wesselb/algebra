@@ -1,6 +1,6 @@
 from . import _dispatch
-from .elements.add import Sum
-from .elements.mul import Scaled, Product
+from .ops.add import Sum
+from .ops.mul import Scaled, Product
 from .algebra import (
     pretty_print,
 
