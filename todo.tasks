@@ -1,6 +1,3 @@
 TODO:
-     ☐ Remove clutter, e.g. `.git` and `.idea`.
-
-＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
-Archive:
- ✓ Also rename `ring` folder. @done (19-06-12 13:54)
+     ☐ Write README. @high
+     ☐ Think about structure: vector field? @high
