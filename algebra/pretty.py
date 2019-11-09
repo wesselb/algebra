@@ -36,8 +36,8 @@ def need_parens(el, parent):
     """Check whether `el` needs parentheses when printed in `parent`.
 
     Args:
-        el (:class:`.field.Element`): Element to print.
-        parent (:class:`.field.Element`): Parent of element to print.
+        el (:class:`.algebra.Element`): Element to print.
+        parent (:class:`.algebra.Element`): Parent of element to print.
 
     Returns:
         bool: Boolean indicating whether `el` needs parentheses.

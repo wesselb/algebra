@@ -237,7 +237,7 @@ def pretty_print(el, formatter):
     """Pretty print an element with a minimal number of parentheses.
 
     Args:
-        el (:class:`.field.Element`): Element to print.
+        el (:class:`.algebra.Element`): Element to print.
         formatter (object): Formatter for values.
 
     Returns:
@@ -266,11 +266,11 @@ def mul(a, b):
     """Multiply two elements.
 
     Args:
-        a (:class:`.field.Element`): First element in product.
-        b (:class:`.field.Element`): Second element in product.
+        a (:class:`.algebra.Element`): First element in product.
+        b (:class:`.algebra.Element`): Second element in product.
 
     Returns:
-        :class:`.field.Element`: Product of the elements.
+        :class:`.algebra.Element`: Product of the elements.
     """
     raise NotImplementedError(f'Multiplication not implemented for '
                               f'"{type(a).__name__}" and "{type(b).__name__}".')
