@@ -16,11 +16,6 @@ On OS X, these are both installed with `brew install gcc`;
 users of Anaconda may want to instead consider `conda install gcc`.
 On Linux, `gcc` is most likely already available, and `gfortran` can be
 installed with `apt-get install gfortran`.
-Then simply
-
-```
-pip install ring
-```
 
 ## Manual
 
