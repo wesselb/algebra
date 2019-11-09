@@ -54,7 +54,7 @@ Then instances of `Numbered` can be manipulated as follows.
 >>> x0 == x0
 True
 
->>> a == b
+>>> x0 == x1
 False
 
 >>> x0 + x1
