@@ -5,9 +5,7 @@ from algebra import (
     Element,
     One,
     Zero,
-    Wrapped,
     Scaled,
-    Join,
     Product,
     Sum,
 
