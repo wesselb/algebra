@@ -24,8 +24,12 @@ pip install algebra
 
 ## Algebra
 
-This package provides an algebra where the elements manipulated as expected,
-with basic algebraic simplifications done automatically.
+This package provides an algebra where the elements can be manipulated 
+in a natural way, with basic algebraic simplifications happening automatically.
+It also support equality checking, which is conservative:
+if `x == y`, then `x` is equal to `y`;
+but if `x != y`, then either `x` is different from `y`, or it could not be 
+proven that `x` is equal to `y`.
 
 As an example, let's create numbered elements.
 
