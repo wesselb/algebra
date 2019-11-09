@@ -2,7 +2,7 @@ from plum import Dispatcher, Self
 
 from .. import _dispatch
 from .mul import mul, Scaled
-from ..ring import (
+from ..algebra import (
     proven,
     new,
 

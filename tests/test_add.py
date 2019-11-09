@@ -1,4 +1,4 @@
-from ring import One, Zero
+from algebra import One, Zero
 
 from .util import a, b
 

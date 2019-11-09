@@ -1,7 +1,7 @@
 from . import _dispatch
 from .elements.add import Sum
 from .elements.mul import Scaled, Product
-from .ring import (
+from .algebra import (
     pretty_print,
 
     Element,

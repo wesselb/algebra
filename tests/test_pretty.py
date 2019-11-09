@@ -1,6 +1,6 @@
 import pytest
 
-from ring import Scaled, Product
+from algebra import Scaled, Product
 
 from .util import a, b
 

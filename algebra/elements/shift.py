@@ -9,7 +9,7 @@ from ..function import (
     ZeroFunction,
     WrappedFunction
 )
-from ..ring import new, proven
+from ..algebra import new, proven
 from ..util import to_tensor, squeeze, tuple_equal, broadcast
 
 __all__ = ['ShiftedFunction']

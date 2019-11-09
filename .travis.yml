@@ -8,6 +8,6 @@ install:
   - pip install --upgrade pip
   - pip install --no-cache-dir -U -r requirements.txt | cat
 script:
-  - pytest -v --cov=ring --cov-report term-missing
+  - pytest -v --cov=algebra --cov-report term-missing
 after_success:
   - coveralls

@@ -2,7 +2,7 @@ import lab as B
 from plum import Dispatcher, Self
 
 from .. import _dispatch
-from ..ring import (
+from ..algebra import (
     proven,
     new,
 
@@ -20,7 +20,7 @@ class Scaled(Wrapped):
     """Scaled element.
 
     Args:
-        e (:class:`.ring.Element`): Element to scale.
+        e (:class:`.algebra.Element`): Element to scale.
         scale (tensor): Scale.
     """
     _dispatch = Dispatcher(in_class=Self)

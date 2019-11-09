@@ -4,7 +4,7 @@ from plum import Dispatcher, Self
 
 from .. import _dispatch
 from ..function import Function
-from ..ring import proven, new, add, mul
+from ..algebra import proven, new, add, mul
 from ..util import tuple_equal
 
 __all__ = ['TensorProductFunction']

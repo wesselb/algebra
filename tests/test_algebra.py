@@ -1,7 +1,7 @@
 import pytest
 from plum import NotFoundLookupError
 
-from ring import (
+from algebra import (
     Element,
     One,
     Zero,
@@ -14,10 +14,10 @@ from ring import (
     add,
     mul,
 
-    get_ring,
+    get_algebra,
     new
 )
-from ring.ring import filter_most_specific
+from algebra.algebra import filter_most_specific
 from .util import a, b, c
 
 
@@ -159,12 +159,12 @@ def test_mul_fallback():
         mul('1', '2')
 
 
-def test_get_ring():
+def test_get_algebra():
     for x in [Element(), One(), Zero()]:
-        assert get_ring(x) == Element
+        assert get_algebra(x) == Element
 
     with pytest.raises(RuntimeError):
-        get_ring(1)
+        get_algebra(1)
 
 
 def test_new():
@@ -174,10 +174,10 @@ def test_new():
     class SumKernel(Kernel, Sum):
         pass
 
-    get_ring.extend(Kernel)(lambda _: Kernel)
+    get_algebra.extend(Kernel)(lambda _: Kernel)
 
-    # Test that the ring is correctly registered.
-    assert get_ring(SumKernel(Kernel(), Kernel())) == Kernel
+    # Test that the algebra is correctly registered.
+    assert get_algebra(SumKernel(Kernel(), Kernel())) == Kernel
 
     # Test the creation of a sum type, which should succeed.
     assert new(Kernel(), Sum) == SumKernel

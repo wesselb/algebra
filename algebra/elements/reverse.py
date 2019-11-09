@@ -22,7 +22,7 @@ from ..function import (
     transform,
     diff
 )
-from ..ring import proven, new, add, mul
+from ..algebra import proven, new, add, mul
 
 __all__ = ['ReversedFunction']
 

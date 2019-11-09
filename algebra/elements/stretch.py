@@ -9,7 +9,7 @@ from ..function import (
     ZeroFunction,
     WrappedFunction
 )
-from ..ring import proven, new
+from ..algebra import proven, new
 from ..util import to_tensor, squeeze, tuple_equal, broadcast
 
 __all__ = ['StretchedFunction']

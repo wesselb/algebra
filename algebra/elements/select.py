@@ -8,7 +8,7 @@ from ..function import (
     ZeroFunction,
     WrappedFunction
 )
-from ..ring import proven, new
+from ..algebra import proven, new
 from ..util import squeeze, tuple_equal
 
 __all__ = ['SelectedFunction']

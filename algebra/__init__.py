@@ -4,5 +4,5 @@ _dispatch = Dispatcher()
 
 from .elements import *
 from .pretty import *
-from .ring import *
+from .algebra import *
 from .function import *

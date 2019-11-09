@@ -3,7 +3,7 @@ from plum import Dispatcher, Self
 from . import _dispatch
 from .elements.add import Sum
 from .elements.mul import Scaled, Product
-from .ring import (
+from .algebra import (
     Element,
     One,
     Zero,
@@ -106,9 +106,9 @@ class Function(Element):
         return reverse(self)
 
 
-# Register the ring.
+# Register the algebra.
 @_dispatch(Function)
-def get_ring(a):
+def get_algebra(a):
     return Function
 
 

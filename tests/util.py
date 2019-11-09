@@ -1,7 +1,7 @@
 from numpy.testing import assert_allclose, assert_array_almost_equal
 from plum import Dispatcher, Self
 
-from ring import Element
+from algebra import Element
 
 __all__ = ['allclose',
            'approx',

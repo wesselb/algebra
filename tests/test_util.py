@@ -3,7 +3,7 @@ import operator
 import numpy as np
 import pytest
 
-from ring.util import (
+from algebra.util import (
     squeeze,
     get_subclasses,
     broadcast,

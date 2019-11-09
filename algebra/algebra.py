@@ -16,7 +16,7 @@ __all__ = ['proven',
            'pretty_print',
            'add',
            'mul',
-           'get_ring',
+           'get_algebra',
            'new']
 
 _proven_level = 10  #: Current precedence level for proven methods.
@@ -36,7 +36,7 @@ def proven():
 
 
 class Element(metaclass=Referentiable(ABCMeta)):
-    """An element in a ring.
+    """An element in a algebra.
 
     Elements can be added and multiplied.
     """
@@ -91,7 +91,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
             i (int): Index of term.
 
         Returns:
-            :class:`.ring.Element`: The referenced term.
+            :class:`.algebra.Element`: The referenced term.
         """
         if i == 0:
             return self
@@ -110,7 +110,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
             i (int): Index of factor.
 
         Returns:
-            :class:`.ring.Element`: The referenced factor.
+            :class:`.algebra.Element`: The referenced factor.
         """
         if i == 0:
             return self
@@ -188,7 +188,7 @@ class Wrapped(Element):
     """A wrapped element.
 
     Args:
-        e (:class:`.ring.Element`): Element to wrap.
+        e (:class:`.algebra.Element`): Element to wrap.
     """
     _dispatch = Dispatcher(in_class=Self)
 
@@ -210,8 +210,8 @@ class Join(Element):
     """Two wrapped elements.
 
     Args:
-        e1 (:class:`.ring.Element`): First element to wrap.
-        e2 (:class:`.ring.Element`): Second element to wrap.
+        e1 (:class:`.algebra.Element`): First element to wrap.
+        e2 (:class:`.algebra.Element`): Second element to wrap.
     """
     _dispatch = Dispatcher(in_class=Self)
 
@@ -251,11 +251,11 @@ def add(a, b):
     """Add two elements.
 
     Args:
-        a (:class:`.ring.Element`): First element in addition.
-        b (:class:`.ring.Element`): Second element in addition.
+        a (:class:`.algebra.Element`): First element in addition.
+        b (:class:`.algebra.Element`): Second element in addition.
 
     Returns:
-        :class:`.ring.Element`: Sum of the elements.
+        :class:`.algebra.Element`: Sum of the elements.
     """
     raise NotImplementedError(f'Addition not implemented for '
                               f'"{type(a).__name__}" and "{type(b).__name__}".')
@@ -277,33 +277,33 @@ def mul(a, b):
 
 
 @_dispatch(object)
-def get_ring(a):
-    """Get the ring of an element.
+def get_algebra(a):
+    """Get the algebra of an element.
 
     Args:
-        a (:class:`.ring.Element`): Element to get ring of.
+        a (:class:`.algebra.Element`): Element to get algebra of.
 
     Returns:
-        type: Ring of `a`.
+        type: Algebra of `a`.
     """
-    raise RuntimeError(f'Could not determine ring type of '
+    raise RuntimeError(f'Could not determine algebra type of '
                        f'"{type(a).__name__}".')
 
 
-# Register the default ring.
+# Register the default algebra.
 @_dispatch(Element)
-def get_ring(a):
+def get_algebra(a):
     return Element
 
 
-new_cache = {}  #: Cache for `.ring.new`.
+new_cache = {}  #: Cache for `.algebra.new`.
 
 
 def new(a, t):
     """Create a new specialised type.
 
     Args:
-        a (:class:`.ring.Element`): Element to create new type for.
+        a (:class:`.algebra.Element`): Element to create new type for.
         t (type): Type to create.
 
     Returns:
@@ -312,20 +312,20 @@ def new(a, t):
     try:
         return new_cache[type(a), t]
     except KeyError:
-        ring = get_ring(a)
+        algebra = get_algebra(a)
 
         # Determine candidates.
-        ring_types = set(get_subclasses(ring))
+        algebra_types = set(get_subclasses(algebra))
         element_types = {t} | set(get_subclasses(t))
-        candidates = list(ring_types & element_types)
+        candidates = list(algebra_types & element_types)
 
         # The most specific types are the ones we are looking for.
         candidates = filter_most_specific(candidates)
 
         # There should only be a single candidate.
         if len(candidates) != 1:
-            raise RuntimeError(f'Could not determine "{t.__name__}" for ring '
-                               f'"{ring.__name__}".')
+            raise RuntimeError(f'Could not determine "{t.__name__}" for algebra '
+                               f'"{algebra.__name__}".')
 
         new_cache[type(a), t] = candidates[0]
         return new_cache[type(a), t]

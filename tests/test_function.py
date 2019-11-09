@@ -1,7 +1,7 @@
 import pytest
 from plum import Self, Dispatcher
 
-from ring import (
+from algebra import (
     Function,
     OneFunction,
     ZeroFunction,
