@@ -22,7 +22,74 @@ Then simply
 pip install algebra
 ```
 
-## Manual
+## Algebra
+
+This package provides an algebra where the elements manipulated as expected,
+with basic algebraic simplifications done automatically.
+
+As an example, let's create numbered elements.
+
+```python
+from algebra import Element
+
+
+class Numbered(Element):
+    total = 0
+    
+    def __init__(self):
+        self.num = Numbered.total
+        Numbered.total += 1
+    
+    def render(self, formatter):
+        return f'x{self.num}'
+```
+
+Then instances of `Numbered` can be manipulated as follows.
+
+```python
+>>> x0 = Numbered()
+
+>>> x1 = Numbered()
+
+>>> x0 == x0
+True
+
+>>> a == b
+False
+
+>>> x0 + x1
+x0 + x1
+
+>>> x0 + x0
+2 * x0
+
+>>> x0 + x1 == x1 + x0
+True
+
+>>> x0 - x0
+0
+
+>>> 2 + x0
+2 * 1 + x0
+
+>>> (2 + x0) * x1
+(2 * 1 + x0) * x1
+
+>>> (2 + x0) * x1 * 0
+0
+```
+
+
+## Create Your Own Algebra
 
 Coming soon.
+
+## Function Algebra
+
+Coming soon.
+
+## Create Your Own Function Algebra
+
+Coming soon.
+
 
