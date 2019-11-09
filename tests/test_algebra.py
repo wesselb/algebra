@@ -22,7 +22,10 @@ from .util import a, b, c
 
 
 def test_equality_element():
-    assert Element() != Element()
+    e1 = Element()
+    e2 = Element()
+    assert e1 == e1
+    assert e1 != e2
 
 
 def test_equality_one_zero():

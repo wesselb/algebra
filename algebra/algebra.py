@@ -44,7 +44,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
     _dispatch = Dispatcher(in_class=Self)
 
     def __eq__(self, other):
-        return False
+        return self is other
 
     def __mul__(self, other):
         return mul(self, other)
