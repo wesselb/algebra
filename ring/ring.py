@@ -1,37 +1,38 @@
 from abc import ABCMeta, abstractmethod
 
 from plum import Dispatcher, Referentiable, Self
-from lab import B
 
 from . import _dispatch
 from .util import get_subclasses
 
-__all__ = ['Formatter',
+__all__ = ['proven',
 
-           # Precedence levels:
-           'priority',
-           'definite',
-
-           # Ring elements:
            'Element',
            'One',
            'Zero',
            'Wrapped',
            'Join',
-           'Scaled',
-           'Product',
-           'Sum',
 
-           # Ring functions:
            'pretty_print',
            'add',
            'mul',
            'get_ring',
            'new']
 
-Formatter = object  #: A formatter can be any object.
-priority = 10  #: Priority precedence level.
-definite = 20  #: Highest precedence level.
+_proven_level = 10  #: Current precedence level for proven methods.
+
+
+def proven():
+    """Generate a method precedence level for proven methods. Proven methods
+    should be such that any applicable one gives the same result, and in case
+    of ambiguity no particular proven method is preferred.
+
+    Returns:
+        int: Precedence level.
+    """
+    global _proven_level
+    _proven_level += 1
+    return _proven_level
 
 
 class Element(metaclass=Referentiable(ABCMeta)):
@@ -126,12 +127,12 @@ class Element(metaclass=Referentiable(ABCMeta)):
     def __str__(self):
         return self.display()
 
-    @_dispatch(Formatter)
+    @_dispatch(object)
     def display(self, formatter):
         """Display the element.
 
         Args:
-            formatter (function, optional): Function to format values.
+            formatter (object, optional): Function to format values.
 
         Returns:
             str: Element as a string.
@@ -151,7 +152,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
         element.
 
         Args:
-            formatter (function, optional): Function to format values.
+            formatter (elements, optional): Function to format values.
 
         Returns:
             str: Rendering of the element.
@@ -231,94 +232,13 @@ class Join(Element):
         pass
 
 
-class Scaled(Wrapped):
-    """Scaled element.
-
-    Args:
-        e (:class:`.ring.Element`): Element to scale.
-        scale (tensor): Scale.
-    """
-    _dispatch = Dispatcher(in_class=Self)
-
-    def __init__(self, e, scale):
-        Wrapped.__init__(self, e)
-        self.scale = scale
-
-    @property
-    def num_factors(self):
-        return self[0].num_factors + 1
-
-    def render_wrap(self, e, formatter):
-        return f'{formatter(self.scale)} * {e}'
-
-    def factor(self, i):
-        if i >= self.num_factors:
-            raise IndexError('Index out of range.')
-        else:
-            return self.scale if i == 0 else self[0].factor(i - 1)
-
-    @_dispatch(Self)
-    def __eq__(self, other):
-        return self[0] == other[0] and B.all(self.scale == other.scale)
-
-
-class Product(Join):
-    """Product of elements."""
-    _dispatch = Dispatcher(in_class=Self)
-
-    @property
-    def num_factors(self):
-        return self[0].num_factors + self[1].num_factors
-
-    def factor(self, i):
-        if i >= self.num_factors:
-            raise IndexError('Index out of range.')
-        if i < self[0].num_factors:
-            return self[0].factor(i)
-        else:
-            return self[1].factor(i - self[0].num_factors)
-
-    def render_join(self, e1, e2, formatter):
-        return f'{e1} * {e2}'
-
-    @_dispatch(Self)
-    def __eq__(self, other):
-        return (self[0] == other[0] and self[1] == other[1]) or \
-               (self[0] == other[1] and self[1] == other[0])
-
-
-class Sum(Join):
-    """Sum of elements."""
-    _dispatch = Dispatcher(in_class=Self)
-
-    @property
-    def num_terms(self):
-        return self[0].num_terms + self[1].num_terms
-
-    def term(self, i):
-        if i >= self.num_terms:
-            raise IndexError('Index out of range.')
-        if i < self[0].num_terms:
-            return self[0].term(i)
-        else:
-            return self[1].term(i - self[0].num_terms)
-
-    def render_join(self, e1, e2, formatter):
-        return f'{e1} + {e2}'
-
-    @_dispatch(Self)
-    def __eq__(self, other):
-        return (self[0] == other[0] and self[1] == other[1]) or \
-               (self[0] == other[1] and self[1] == other[0])
-
-
-@_dispatch(Element, Formatter)
+@_dispatch(Element, object)
 def pretty_print(el, formatter):
     """Pretty print an element with a minimal number of parentheses.
 
     Args:
         el (:class:`.field.Element`): Element to print.
-        formatter (:class:`.field.Formatter`): Formatter for values.
+        formatter (object): Formatter for values.
 
     Returns:
         str: `el` converted to string prettily.

@@ -1,18 +1,18 @@
 import pytest
-
 from plum import Self, Dispatcher
-from ring.function import (
+
+from ring import (
     Function,
     OneFunction,
     ZeroFunction,
-    ReversedFunction,
     TensorProductFunction,
+    ReversedFunction,
 
     stretch,
     shift,
     select,
     transform,
-    differentiate,
+    diff,
     reverse
 )
 
@@ -137,7 +137,7 @@ def test_transform():
 
 def test_differentiate():
     with pytest.raises(RuntimeError):
-        differentiate(1, 1)
+        diff(1, 1)
 
     assert str(f.diff(0)) == 'd(0) f'
     assert str(f.diff(0, 1)) == 'd(0, 1) f'

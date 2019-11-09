@@ -1,31 +1,29 @@
 from . import _dispatch
+from .elements.add import Sum
+from .elements.mul import Scaled, Product
 from .ring import (
     pretty_print,
-    Formatter,
 
     Element,
     Wrapped,
-    Join,
-    Scaled,
-    Sum,
-    Product
+    Join
 )
 
 __all__ = []
 
 
-@_dispatch(Wrapped, Formatter)
+@_dispatch(Wrapped, object)
 def pretty_print(el, formatter):
     return el.render_wrap(pretty_print(el[0], el, formatter), formatter)
 
 
-@_dispatch(Join, Formatter)
+@_dispatch(Join, object)
 def pretty_print(el, formatter):
     return el.render_join(pretty_print(el[0], el, formatter),
                           pretty_print(el[1], el, formatter), formatter)
 
 
-@_dispatch(Element, Element, Formatter)
+@_dispatch(Element, Element, object)
 def pretty_print(el, parent, formatter):
     if need_parens(el, parent):
         return '(' + pretty_print(el, formatter) + ')'

@@ -1,17 +1,43 @@
-from . import _dispatch
-from .mul import mul
-from .ring import (
-    definite,
+from plum import Dispatcher, Self
+
+from .. import _dispatch
+from .mul import mul, Scaled
+from ..ring import (
+    proven,
     new,
 
     Element,
     Zero,
     One,
-    Scaled,
-    Sum
+    Join
 )
 
-__all__ = []
+__all__ = ['Sum']
+
+
+class Sum(Join):
+    """Sum of elements."""
+    _dispatch = Dispatcher(in_class=Self)
+
+    @property
+    def num_terms(self):
+        return self[0].num_terms + self[1].num_terms
+
+    def term(self, i):
+        if i >= self.num_terms:
+            raise IndexError('Index out of range.')
+        if i < self[0].num_terms:
+            return self[0].term(i)
+        else:
+            return self[1].term(i - self[0].num_terms)
+
+    def render_join(self, e1, e2, formatter):
+        return f'{e1} + {e2}'
+
+    @_dispatch(Self)
+    def __eq__(self, other):
+        return (self[0] == other[0] and self[1] == other[1]) or \
+               (self[0] == other[1] and self[1] == other[0])
 
 
 # Generic addition.
@@ -42,7 +68,7 @@ def add(a, b):
 
 # Cancel redundant zeros and ones.
 
-@_dispatch(Zero, object, precedence=definite)
+@_dispatch(Zero, object, precedence=proven())
 def add(a, b):
     if b is 0:
         return a
@@ -50,7 +76,7 @@ def add(a, b):
         return mul(new(a, One)(), b)
 
 
-@_dispatch(object, Zero, precedence=definite)
+@_dispatch(object, Zero, precedence=proven())
 def add(a, b):
     if a is 0:
         return b
@@ -58,17 +84,17 @@ def add(a, b):
         return mul(a, new(b, One)())
 
 
-@_dispatch(Zero, Zero, precedence=definite)
+@_dispatch(Zero, Zero, precedence=proven())
 def add(a, b):
     return a
 
 
-@_dispatch(Element, Zero, precedence=definite)
+@_dispatch(Element, Zero, precedence=proven())
 def add(a, b):
     return a
 
 
-@_dispatch(Zero, Element, precedence=definite)
+@_dispatch(Zero, Element, precedence=proven())
 def add(a, b):
     return b
 
