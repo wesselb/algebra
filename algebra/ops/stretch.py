@@ -3,16 +3,11 @@ import operator
 from plum import Dispatcher, Self
 
 from .. import _dispatch
-from ..function import (
-    Function,
-    OneFunction,
-    ZeroFunction,
-    WrappedFunction
-)
+from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
 from ..algebra import proven, new
 from ..util import to_tensor, squeeze, tuple_equal, broadcast
 
-__all__ = ['StretchedFunction']
+__all__ = ["StretchedFunction"]
 
 
 class StretchedFunction(WrappedFunction):
@@ -22,6 +17,7 @@ class StretchedFunction(WrappedFunction):
         e (:class:`.elements.Function`): Function to stretch.
         *stretches (tensor): Extent of stretches.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e, *stretches):
@@ -30,12 +26,11 @@ class StretchedFunction(WrappedFunction):
 
     def render_wrap(self, e, formatter):
         stretches = tuple(formatter(s) for s in self.stretches)
-        return '{} > {}'.format(e, squeeze(stretches))
+        return "{} > {}".format(e, squeeze(stretches))
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and \
-               tuple_equal(self.stretches, other.stretches)
+        return self[0] == other[0] and tuple_equal(self.stretches, other.stretches)
 
 
 @_dispatch(Function, [object])

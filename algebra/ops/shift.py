@@ -3,16 +3,11 @@ import operator
 from plum import Dispatcher, Self
 
 from .. import _dispatch
-from ..function import (
-    Function,
-    OneFunction,
-    ZeroFunction,
-    WrappedFunction
-)
+from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
 from ..algebra import new, proven
 from ..util import to_tensor, squeeze, tuple_equal, broadcast
 
-__all__ = ['ShiftedFunction']
+__all__ = ["ShiftedFunction"]
 
 
 class ShiftedFunction(WrappedFunction):
@@ -22,6 +17,7 @@ class ShiftedFunction(WrappedFunction):
         e (:class:`.elements.Function`): Function to shift.
         *shifts (tensor): Shift amounts.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e, *shifts):
@@ -30,12 +26,11 @@ class ShiftedFunction(WrappedFunction):
 
     def render_wrap(self, e, formatter):
         shifts = tuple(formatter(s) for s in self.shifts)
-        return '{} shift {}'.format(e, squeeze(shifts))
+        return "{} shift {}".format(e, squeeze(shifts))
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and \
-               tuple_equal(self.shifts, other.shifts)
+        return self[0] == other[0] and tuple_equal(self.shifts, other.shifts)
 
 
 @_dispatch(Function, [object])

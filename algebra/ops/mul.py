@@ -2,18 +2,9 @@ import lab as B
 from plum import Dispatcher, Self
 
 from .. import _dispatch
-from ..algebra import (
-    proven,
-    new,
+from ..algebra import proven, new, Element, Zero, One, Wrapped, Join
 
-    Element,
-    Zero,
-    One,
-    Wrapped,
-    Join
-)
-
-__all__ = ['Scaled', 'Product']
+__all__ = ["Scaled", "Product"]
 
 
 class Scaled(Wrapped):
@@ -23,6 +14,7 @@ class Scaled(Wrapped):
         e (:class:`.algebra.Element`): Element to scale.
         scale (tensor): Scale.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e, scale):
@@ -34,11 +26,11 @@ class Scaled(Wrapped):
         return self[0].num_factors + 1
 
     def render_wrap(self, e, formatter):
-        return f'{formatter(self.scale)} * {e}'
+        return f"{formatter(self.scale)} * {e}"
 
     def factor(self, i):
         if i >= self.num_factors:
-            raise IndexError('Index out of range.')
+            raise IndexError("Index out of range.")
         else:
             return self.scale if i == 0 else self[0].factor(i - 1)
 
@@ -49,6 +41,7 @@ class Scaled(Wrapped):
 
 class Product(Join):
     """Product of elements."""
+
     _dispatch = Dispatcher(in_class=Self)
 
     @property
@@ -57,22 +50,24 @@ class Product(Join):
 
     def factor(self, i):
         if i >= self.num_factors:
-            raise IndexError('Index out of range.')
+            raise IndexError("Index out of range.")
         if i < self[0].num_factors:
             return self[0].factor(i)
         else:
             return self[1].factor(i - self[0].num_factors)
 
     def render_join(self, e1, e2, formatter):
-        return f'{e1} * {e2}'
+        return f"{e1} * {e2}"
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return (self[0] == other[0] and self[1] == other[1]) or \
-               (self[0] == other[1] and self[1] == other[0])
+        return (self[0] == other[0] and self[1] == other[1]) or (
+            self[0] == other[1] and self[1] == other[0]
+        )
 
 
 # Generic multiplication.
+
 
 @_dispatch(Element, object)
 def mul(a, b):
@@ -90,10 +85,12 @@ def mul(a, b):
 
 
 @_dispatch(Element, Element)
-def mul(a, b): return new(a, Product)(a, b)
+def mul(a, b):
+    return new(a, Product)(a, b)
 
 
 # Cancel redundant zeros and ones.
+
 
 @_dispatch(Zero, object, precedence=proven())
 def mul(a, b):
@@ -126,6 +123,7 @@ def mul(a, b):
 
 
 # Group factors and terms if possible.
+
 
 @_dispatch(object, Scaled)
 def mul(a, b):

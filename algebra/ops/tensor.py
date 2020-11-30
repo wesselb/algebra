@@ -7,7 +7,7 @@ from ..function import Function
 from ..algebra import proven, new, add, mul
 from ..util import tuple_equal
 
-__all__ = ['TensorProductFunction']
+__all__ = ["TensorProductFunction"]
 
 
 class TensorProductFunction(Function):
@@ -16,6 +16,7 @@ class TensorProductFunction(Function):
     Args:
         *fs (function): Per input, a elements.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, *fs):
@@ -25,7 +26,7 @@ class TensorProductFunction(Function):
         if len(self.fs) == 1:
             return self.fs[0].__name__
         else:
-            return '{}'.format(' x '.join(f.__name__ for f in self.fs))
+            return "{}".format(" x ".join(f.__name__ for f in self.fs))
 
     @_dispatch(Self)
     def __eq__(self, other):
@@ -35,12 +36,14 @@ class TensorProductFunction(Function):
 # A tensor product elements needs parentheses if and only if it has more than
 # one elements.
 
+
 @_dispatch(TensorProductFunction, Function, precedence=proven())
 def need_parens(el, parent):
     return len(el.fs) > 1
 
 
 # Handle conversion of Python functions.
+
 
 @mul.extend(Function, PythonFunction, precedence=proven())
 def mul(a, b):

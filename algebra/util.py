@@ -2,11 +2,7 @@ import lab as B
 import numpy as np
 from plum import Dispatcher
 
-__all__ = ['squeeze',
-           'get_subclasses',
-           'broadcast',
-           'tuple_equal',
-           'to_tensor']
+__all__ = ["squeeze", "get_subclasses", "broadcast", "tuple_equal", "to_tensor"]
 
 _dispatch = Dispatcher()
 
@@ -32,8 +28,9 @@ def get_subclasses(c):
     Returns:
         list[type]: List of subclasses of `c`.
     """
-    return c.__subclasses__() + \
-           [x for sc in c.__subclasses__() for x in get_subclasses(sc)]
+    return c.__subclasses__() + [
+        x for sc in c.__subclasses__() for x in get_subclasses(sc)
+    ]
 
 
 def broadcast(op, xs, ys):
@@ -86,9 +83,9 @@ def tuple_equal(x, y):
     Returns:
         bool: `x` and `y` are equal.
     """
-    return len(x) == len(y) and \
-           all([_shape(xi) == _shape(yi) and B.all(xi == yi)
-                for xi, yi in zip(x, y)])
+    return len(x) == len(y) and all(
+        [_shape(xi) == _shape(yi) and B.all(xi == yi) for xi, yi in zip(x, y)]
+    )
 
 
 @_dispatch(B.Numeric)

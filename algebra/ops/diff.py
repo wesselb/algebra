@@ -10,7 +10,7 @@ from ..function import (
 from ..algebra import proven, new
 from ..util import tuple_equal
 
-__all__ = ['DerivativeFunction']
+__all__ = ["DerivativeFunction"]
 
 
 class DerivativeFunction(WrappedFunction):
@@ -22,6 +22,7 @@ class DerivativeFunction(WrappedFunction):
         *derivs (tensor): Per input, the index of the dimension which to
             take the derivative of. Set to `None` to not take a derivative.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e, *derivs):
@@ -30,15 +31,14 @@ class DerivativeFunction(WrappedFunction):
 
     def render_wrap(self, e, formatter):
         if len(self.derivs) == 1:
-            derivs = '({})'.format(self.derivs[0])
+            derivs = "({})".format(self.derivs[0])
         else:
             derivs = self.derivs
-        return 'd{} {}'.format(derivs, e)
+        return "d{} {}".format(derivs, e)
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and \
-               tuple_equal(self.derivs, other.derivs)
+        return self[0] == other[0] and tuple_equal(self.derivs, other.derivs)
 
 
 @_dispatch(Function, [object])

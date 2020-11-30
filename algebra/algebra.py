@@ -5,19 +5,19 @@ from plum import Dispatcher, Referentiable, Self
 from . import _dispatch
 from .util import get_subclasses
 
-__all__ = ['proven',
-
-           'Element',
-           'One',
-           'Zero',
-           'Wrapped',
-           'Join',
-
-           'pretty_print',
-           'add',
-           'mul',
-           'get_algebra',
-           'new']
+__all__ = [
+    "proven",
+    "Element",
+    "One",
+    "Zero",
+    "Wrapped",
+    "Join",
+    "pretty_print",
+    "add",
+    "mul",
+    "get_algebra",
+    "new",
+]
 
 _proven_level = 10  #: Current precedence level for proven methods.
 
@@ -70,7 +70,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
     @_dispatch(int)
     def __pow__(self, power, modulo=None):
         if power < 0:
-            raise ValueError('Cannot raise to a negative power.')
+            raise ValueError("Cannot raise to a negative power.")
         elif power == 0:
             return 1
         else:
@@ -96,7 +96,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
         if i == 0:
             return self
         else:
-            raise IndexError('Index out of range.')
+            raise IndexError("Index out of range.")
 
     @property
     def num_factors(self):
@@ -115,7 +115,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
         if i == 0:
             return self
         else:
-            raise IndexError('Index out of range.')
+            raise IndexError("Index out of range.")
 
     @property
     def __name__(self):
@@ -146,10 +146,9 @@ class Element(metaclass=Referentiable(ABCMeta)):
     def render(self, formatter):
         """Render the element.
 
-        This is the lowest-level operation in  pretty printing an element,
-        and should produce a string representation of the element. This
-        method should be implemented to determine how to render a custom
-        element.
+        This is the lowest-level operation in pretty printing an element, and should
+        produce a string representation of the element. This method should be
+        implemented to determine how to render a custom element.
 
         Args:
             formatter (elements, optional): Function to format values.
@@ -157,15 +156,16 @@ class Element(metaclass=Referentiable(ABCMeta)):
         Returns:
             str: Rendering of the element.
         """
-        return f'{self.__name__}()'
+        return f"{self.__name__}()"
 
 
 class One(Element):
     """The constant `1`."""
+
     _dispatch = Dispatcher(in_class=Self)
 
     def render(self, formatter):
-        return '1'
+        return "1"
 
     @_dispatch(Self)
     def __eq__(self, other):
@@ -174,10 +174,11 @@ class One(Element):
 
 class Zero(Element):
     """The constant `0`."""
+
     _dispatch = Dispatcher(in_class=Self)
 
     def render(self, formatter):
-        return '0'
+        return "0"
 
     @_dispatch(Self)
     def __eq__(self, other):
@@ -190,6 +191,7 @@ class Wrapped(Element):
     Args:
         e (:class:`.algebra.Element`): Element to wrap.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e):
@@ -199,7 +201,7 @@ class Wrapped(Element):
         if item == 0:
             return self.e
         else:
-            raise IndexError('Index out of range.')
+            raise IndexError("Index out of range.")
 
     @abstractmethod
     def render_wrap(self, e, formatter):  # pragma: no cover
@@ -213,6 +215,7 @@ class Join(Element):
         e1 (:class:`.algebra.Element`): First element to wrap.
         e2 (:class:`.algebra.Element`): Second element to wrap.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e1, e2):
@@ -225,7 +228,7 @@ class Join(Element):
         elif item == 1:
             return self.e2
         else:
-            raise IndexError('Index out of range.')
+            raise IndexError("Index out of range.")
 
     @abstractmethod
     def render_join(self, e1, e2, formatter):  # pragma: no cover
@@ -257,8 +260,10 @@ def add(a, b):
     Returns:
         :class:`.algebra.Element`: Sum of the elements.
     """
-    raise NotImplementedError(f'Addition not implemented for '
-                              f'"{type(a).__name__}" and "{type(b).__name__}".')
+    raise NotImplementedError(
+        f"Addition not implemented for "
+        f'"{type(a).__name__}" and "{type(b).__name__}".'
+    )
 
 
 @_dispatch(object, object)
@@ -272,8 +277,10 @@ def mul(a, b):
     Returns:
         :class:`.algebra.Element`: Product of the elements.
     """
-    raise NotImplementedError(f'Multiplication not implemented for '
-                              f'"{type(a).__name__}" and "{type(b).__name__}".')
+    raise NotImplementedError(
+        f"Multiplication not implemented for "
+        f'"{type(a).__name__}" and "{type(b).__name__}".'
+    )
 
 
 @_dispatch(object)
@@ -286,8 +293,7 @@ def get_algebra(a):
     Returns:
         type: Algebra of `a`.
     """
-    raise RuntimeError(f'Could not determine algebra type of '
-                       f'"{type(a).__name__}".')
+    raise RuntimeError(f'Could not determine algebra type of "{type(a).__name__}".')
 
 
 # Register the default algebra.
@@ -324,8 +330,9 @@ def new(a, t):
 
         # There should only be a single candidate.
         if len(candidates) != 1:
-            raise RuntimeError(f'Could not determine "{t.__name__}" for algebra '
-                               f'"{algebra.__name__}".')
+            raise RuntimeError(
+                f'Could not determine "{t.__name__}" for algebra "{algebra.__name__}".'
+            )
 
         new_cache[type(a), t] = candidates[0]
         return new_cache[type(a), t]
@@ -347,8 +354,8 @@ def filter_most_specific(types):
 
         # If `t` is a supertype, discard it. Otherwise, keep it.
         if not (
-                any(issubclass(u, t) for u in types) or
-                any(issubclass(u, t) for u in filtered_types)
+            any(issubclass(u, t) for u in types)
+            or any(issubclass(u, t) for u in filtered_types)
         ):
             filtered_types.append(t)
 

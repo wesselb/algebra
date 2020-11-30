@@ -1,13 +1,7 @@
 from . import _dispatch
 from .ops.add import Sum
 from .ops.mul import Scaled, Product
-from .algebra import (
-    pretty_print,
-
-    Element,
-    Wrapped,
-    Join
-)
+from .algebra import pretty_print, Element, Wrapped, Join
 
 __all__ = []
 
@@ -19,14 +13,17 @@ def pretty_print(el, formatter):
 
 @_dispatch(Join, object)
 def pretty_print(el, formatter):
-    return el.render_join(pretty_print(el[0], el, formatter),
-                          pretty_print(el[1], el, formatter), formatter)
+    return el.render_join(
+        pretty_print(el[0], el, formatter),
+        pretty_print(el[1], el, formatter),
+        formatter,
+    )
 
 
 @_dispatch(Element, Element, object)
 def pretty_print(el, parent, formatter):
     if need_parens(el, parent):
-        return '(' + pretty_print(el, formatter) + ')'
+        return "(" + pretty_print(el, formatter) + ")"
     else:
         return pretty_print(el, formatter)
 

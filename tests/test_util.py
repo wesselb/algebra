@@ -3,13 +3,7 @@ import operator
 import numpy as np
 import pytest
 
-from algebra.util import (
-    squeeze,
-    get_subclasses,
-    broadcast,
-    tuple_equal,
-    to_tensor
-)
+from algebra.util import squeeze, get_subclasses, broadcast, tuple_equal, to_tensor
 
 
 def test_squeeze():

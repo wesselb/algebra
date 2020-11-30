@@ -2,21 +2,14 @@ from plum import Dispatcher, Self
 
 from .. import _dispatch
 from .mul import mul, Scaled
-from ..algebra import (
-    proven,
-    new,
+from ..algebra import proven, new, Element, Zero, One, Join
 
-    Element,
-    Zero,
-    One,
-    Join
-)
-
-__all__ = ['Sum']
+__all__ = ["Sum"]
 
 
 class Sum(Join):
     """Sum of elements."""
+
     _dispatch = Dispatcher(in_class=Self)
 
     @property
@@ -25,22 +18,24 @@ class Sum(Join):
 
     def term(self, i):
         if i >= self.num_terms:
-            raise IndexError('Index out of range.')
+            raise IndexError("Index out of range.")
         if i < self[0].num_terms:
             return self[0].term(i)
         else:
             return self[1].term(i - self[0].num_terms)
 
     def render_join(self, e1, e2, formatter):
-        return f'{e1} + {e2}'
+        return f"{e1} + {e2}"
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return (self[0] == other[0] and self[1] == other[1]) or \
-               (self[0] == other[1] and self[1] == other[0])
+        return (self[0] == other[0] and self[1] == other[1]) or (
+            self[0] == other[1] and self[1] == other[0]
+        )
 
 
 # Generic addition.
+
 
 @_dispatch(Element, object)
 def add(a, b):
@@ -67,6 +62,7 @@ def add(a, b):
 
 
 # Cancel redundant zeros and ones.
+
 
 @_dispatch(Zero, object, precedence=proven())
 def add(a, b):
@@ -100,6 +96,7 @@ def add(a, b):
 
 
 # Group factors and terms if possible.
+
 
 @_dispatch(Scaled, Element)
 def add(a, b):

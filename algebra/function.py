@@ -3,33 +3,29 @@ from plum import Dispatcher, Self
 from . import _dispatch
 from .ops.add import Sum
 from .ops.mul import Scaled, Product
-from .algebra import (
-    Element,
-    One,
-    Zero,
-    Wrapped,
-    Join
-)
+from .algebra import Element, One, Zero, Wrapped, Join
 
-__all__ = ['Function',
-           'OneFunction',
-           'ZeroFunction',
-           'WrappedFunction',
-           'ScaledFunction',
-           'JoinFunction',
-           'SumFunction',
-           'ProductFunction',
-
-           'stretch',
-           'shift',
-           'select',
-           'transform',
-           'diff',
-           'reverse']
+__all__ = [
+    "Function",
+    "OneFunction",
+    "ZeroFunction",
+    "WrappedFunction",
+    "ScaledFunction",
+    "JoinFunction",
+    "SumFunction",
+    "ProductFunction",
+    "stretch",
+    "shift",
+    "select",
+    "transform",
+    "diff",
+    "reverse",
+]
 
 
 class Function(Element):
     """A elements."""
+
     _dispatch = Dispatcher(in_class=Self)
 
     def stretch(self, *stretches):
@@ -151,8 +147,7 @@ def stretch(a, *stretches):
     Returns:
         :class:`.elements.Function`: Stretched elements.
     """
-    raise NotImplementedError('Stretching not implemented for "{}".'
-                              ''.format(type(a).__name__))
+    raise NotImplementedError(f'Stretching not implemented for "{type(a).__name__}".')
 
 
 @_dispatch(object, [object])
@@ -166,8 +161,7 @@ def shift(a, *shifts):
     Returns:
         :class:`.elements.Function`: Shifted element.
     """
-    raise NotImplementedError('Shifting not implemented for "{}".'
-                              ''.format(type(a).__name__))
+    raise NotImplementedError(f'Shifting not implemented for "{type(a).__name__}".')
 
 
 @_dispatch(object, [object])
@@ -183,8 +177,7 @@ def select(a, *dims):
         :class:`.elements.Function`: Function with particular dimensions
             from the inputs selected.
     """
-    raise NotImplementedError('Selection not implemented for "{}".'
-                              ''.format(type(a).__name__))
+    raise NotImplementedError(f'Selection not implemented for "{type(a).__name__}".')
 
 
 @_dispatch(object, [object])
@@ -200,8 +193,9 @@ def transform(a, *fs):
         :class:`.elements.Function`: Function with its inputs
             transformed.
     """
-    raise NotImplementedError('Input transforms not implemented for "{}".'
-                              ''.format(type(a).__name__))
+    raise NotImplementedError(
+        f'Input transforms not implemented for "{type(a).__name__}".'
+    )
 
 
 @_dispatch(object, [object])
@@ -217,8 +211,9 @@ def diff(a, *derivs):
     Returns:
         :class:`.elements.Function`: Derivative of the elements.
     """
-    raise NotImplementedError('Differentiation not implemented for "{}".'
-                              ''.format(type(a).__name__))
+    raise NotImplementedError(
+        f'Differentiation not implemented for "{type(a).__name__}".'
+    )
 
 
 @_dispatch(object)
@@ -231,5 +226,6 @@ def reverse(a):
     Returns:
         :class:`.elements.Function`: Function with arguments reversed.
     """
-    raise NotImplementedError('Argument reversal not implemented for "{}".'
-                              ''.format(type(a).__name__))
+    raise NotImplementedError(
+        f'Argument reversal not implemented for "{type(a).__name__}".'
+    )

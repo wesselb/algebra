@@ -3,17 +3,14 @@ from plum import Dispatcher, Self
 
 from algebra import Element
 
-__all__ = ['allclose',
-           'approx',
-           'a',
-           'b',
-           'c']
+__all__ = ["allclose", "approx", "a", "b", "c"]
 
 allclose = assert_allclose
 approx = assert_array_almost_equal
 
 
 # Some extra atomic elements to test with:
+
 
 class A(Element):
     dispatch = Dispatcher(in_class=Self)
@@ -23,7 +20,7 @@ class A(Element):
         return True
 
     def render(self, formatter):
-        return 'a'
+        return "a"
 
 
 a = A()
@@ -37,7 +34,7 @@ class B(Element):
         return True
 
     def render(self, formatter):
-        return 'b'
+        return "b"
 
 
 b = B()
@@ -51,7 +48,7 @@ class C(Element):
         return True
 
     def render(self, formatter):
-        return 'c'
+        return "c"
 
 
 c = C()

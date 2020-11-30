@@ -2,16 +2,11 @@ import lab as B
 from plum import Dispatcher, Self
 
 from .. import _dispatch
-from ..function import (
-    Function,
-    OneFunction,
-    ZeroFunction,
-    WrappedFunction
-)
+from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
 from ..algebra import proven, new
 from ..util import squeeze, tuple_equal
 
-__all__ = ['SelectedFunction']
+__all__ = ["SelectedFunction"]
 
 
 class SelectedFunction(WrappedFunction):
@@ -21,6 +16,7 @@ class SelectedFunction(WrappedFunction):
         e (:class:`.elements.Function`): Function to wrap.
         *dims (tensor): Dimensions to select.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e, *dims):
@@ -28,12 +24,11 @@ class SelectedFunction(WrappedFunction):
         self.dims = tuple(None if x is None else _to_list(x) for x in dims)
 
     def render_wrap(self, e, formatter):
-        return '{} : {}'.format(e, squeeze(tuple(self.dims)))
+        return "{} : {}".format(e, squeeze(tuple(self.dims)))
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and \
-               tuple_equal(self.dims, other.dims)
+        return self[0] == other[0] and tuple_equal(self.dims, other.dims)
 
 
 def _to_list(x):

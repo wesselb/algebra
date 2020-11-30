@@ -15,16 +15,15 @@ from ..function import (
     ScaledFunction,
     SumFunction,
     ProductFunction,
-
     stretch,
     shift,
     select,
     transform,
-    diff
+    diff,
 )
 from ..algebra import proven, new, add, mul
 
-__all__ = ['ReversedFunction']
+__all__ = ["ReversedFunction"]
 
 
 class ReversedFunction(WrappedFunction):
@@ -33,10 +32,11 @@ class ReversedFunction(WrappedFunction):
     Args:
         e (:class:`.elements.Function`): Function to reverse arguments of.
     """
+
     _dispatch = Dispatcher(in_class=Self)
 
     def render_wrap(self, e, formatter):
-        return f'Reversed({e})'
+        return f"Reversed({e})"
 
     @_dispatch(Self)
     def __eq__(self, other):
@@ -44,6 +44,7 @@ class ReversedFunction(WrappedFunction):
 
 
 # A reversed elements will never need parentheses.
+
 
 @_dispatch(Function, ReversedFunction, precedence=proven())
 def need_parens(el, parent):
@@ -57,6 +58,7 @@ def need_parens(el, parent):
 
 # Implement basic methods for reverse function.
 
+
 @_dispatch(Function)
 def reverse(a):
     return new(a, ReversedFunction)(a)
@@ -68,6 +70,7 @@ def reverse(a):
 
 
 # Propagate reversal.
+
 
 @_dispatch(SumFunction)
 def reverse(a):
@@ -85,6 +88,7 @@ def reverse(a):
 
 
 # Let reversal synergise with wrapped kernels.
+
 
 @_dispatch(ReversedFunction)
 def reverse(a):
