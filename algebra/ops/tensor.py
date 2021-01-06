@@ -55,7 +55,7 @@ def mul(a, b):
     return mul(new(b, TensorProductFunction)(a), b)
 
 
-@add.extend(Function, PythonFunction, precendence=proven())
+@add.extend(Function, PythonFunction, precedence=proven())
 def add(a, b):
     return add(a, new(a, TensorProductFunction)(b))
 
