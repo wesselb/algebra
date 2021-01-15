@@ -4,7 +4,7 @@ from plum import Dispatcher, Self
 from .. import _dispatch
 from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
 from ..algebra import proven, new
-from ..util import squeeze, tuple_equal
+from ..util import squeeze, identical
 
 __all__ = ["SelectedFunction"]
 
@@ -28,7 +28,7 @@ class SelectedFunction(WrappedFunction):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and tuple_equal(self.dims, other.dims)
+        return self[0] == other[0] and identical(self.dims, other.dims)
 
 
 def _to_list(x):

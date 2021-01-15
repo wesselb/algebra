@@ -8,7 +8,7 @@ from ..function import (
     WrappedFunction,
 )
 from ..algebra import proven, new
-from ..util import tuple_equal
+from ..util import identical
 
 __all__ = ["DerivativeFunction"]
 
@@ -38,7 +38,7 @@ class DerivativeFunction(WrappedFunction):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and tuple_equal(self.derivs, other.derivs)
+        return self[0] == other[0] and identical(self.derivs, other.derivs)
 
 
 @_dispatch(Function, [object])

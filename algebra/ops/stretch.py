@@ -5,7 +5,7 @@ from plum import Dispatcher, Self
 from .. import _dispatch
 from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
 from ..algebra import proven, new
-from ..util import to_tensor, squeeze, tuple_equal, broadcast
+from ..util import to_tensor, squeeze, identical, broadcast
 
 __all__ = ["StretchedFunction"]
 
@@ -30,7 +30,7 @@ class StretchedFunction(WrappedFunction):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and tuple_equal(self.stretches, other.stretches)
+        return self[0] == other[0] and identical(self.stretches, other.stretches)
 
 
 @_dispatch(Function, [object])

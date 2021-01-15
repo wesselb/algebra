@@ -3,7 +3,7 @@ import operator
 import numpy as np
 import pytest
 
-from algebra.util import squeeze, get_subclasses, broadcast, tuple_equal, to_tensor
+from algebra.util import squeeze, get_subclasses, broadcast, identical, to_tensor
 
 
 def test_squeeze():
@@ -42,12 +42,28 @@ def test_to_tensor():
     assert isinstance(to_tensor([1, 2]), np.ndarray)
 
 
-def test_tuple_equal():
-    assert tuple_equal((1,), (1,))
-    assert tuple_equal((1, [1]), (1, [1]))
-    assert not tuple_equal((1,), ([1],))
-    assert not tuple_equal(([1],), ([1], [1]))
-    assert tuple_equal(([1],), ([1],))
-    assert not tuple_equal(([1],), ([2],))
-    assert not tuple_equal(([1], [1, 2]), ([1, 2], [1, 2]))
-    assert not tuple_equal(([1], [1, 2]), ([1], [1, 3]))
+def test_identical():
+    class A:
+        pass
+
+    a1 = A()
+    a2 = A()
+
+    assert identical(a1, a1)
+    assert not identical(a1, a2)
+
+    # Test tuples and lists.
+    assert identical((1, 2), (1, 2))
+    assert not identical((1, 2), (1,))
+    assert identical([1, 2], [1, 2])
+    assert not identical([1, 2], [1])
+    assert not identical((1, 2), [1, 2])
+
+    # Test floats and integers.
+    assert identical(1, 1)
+    assert identical(1, 1.0)
+    assert identical(1.0, 1.0)
+
+    # Test that more complicated tensors are not identical. That can cause issues with
+    # tracing
+    assert not identical(np.ones(1), np.ones(1))

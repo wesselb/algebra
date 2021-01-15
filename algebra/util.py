@@ -1,8 +1,7 @@
 import lab as B
-import numpy as np
 from plum import Dispatcher
 
-__all__ = ["squeeze", "get_subclasses", "broadcast", "tuple_equal", "to_tensor"]
+__all__ = ["squeeze", "get_subclasses", "broadcast", "identical", "to_tensor"]
 
 _dispatch = Dispatcher()
 
@@ -62,30 +61,29 @@ def broadcast(op, xs, ys):
     return tuple(op(x, y) for x, y in zip(xs, ys))
 
 
-@_dispatch(B.Numeric)
-def _shape(x):
-    return B.shape(x)
-
-
-@_dispatch(object)
-def _shape(x):
-    return np.shape(x)
-
-
-@_dispatch(tuple, tuple)
-def tuple_equal(x, y):
-    """Check tuples for equality.
+@_dispatch(object, object)
+def identical(x, y):
+    """Check if two objects `x` are `y` are identical for the purpose of algebraic
+    simplification.
 
     Args:
-        x (tuple): First tuple.
-        y (tuple): Second tuple.
+        x (object): First object.
+        y (object): Second object.
 
     Returns:
-        bool: `x` and `y` are equal.
+        bool: `x` and `y` are identical.
     """
-    return len(x) == len(y) and all(
-        [_shape(xi) == _shape(yi) and B.all(xi == yi) for xi, yi in zip(x, y)]
-    )
+    return x is y
+
+
+@_dispatch({int, float}, {int, float})
+def identical(x, y):
+    return x == y
+
+
+@_dispatch.multi((tuple, tuple), (list, list))
+def identical(x, y):
+    return len(x) == len(y) and all([identical(xi, yi) for xi, yi in zip(x, y)])
 
 
 @_dispatch(B.Numeric)

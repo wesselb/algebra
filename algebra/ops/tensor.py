@@ -5,7 +5,7 @@ from plum import Dispatcher, Self
 from .. import _dispatch
 from ..function import Function
 from ..algebra import proven, new, add, mul
-from ..util import tuple_equal
+from ..util import identical
 
 __all__ = ["TensorProductFunction"]
 
@@ -30,7 +30,7 @@ class TensorProductFunction(Function):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return tuple_equal(self.fs, other.fs)
+        return identical(self.fs, other.fs)
 
 
 # A tensor product elements needs parentheses if and only if it has more than

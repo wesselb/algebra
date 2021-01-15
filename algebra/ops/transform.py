@@ -3,7 +3,7 @@ from plum import Dispatcher, Self
 from .. import _dispatch
 from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
 from ..algebra import proven, new
-from ..util import tuple_equal
+from ..util import identical
 
 __all__ = ["InputTransformedFunction"]
 
@@ -36,7 +36,7 @@ class InputTransformedFunction(WrappedFunction):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and tuple_equal(self.fs, other.fs)
+        return self[0] == other[0] and identical(self.fs, other.fs)
 
 
 @_dispatch(Function, [object])

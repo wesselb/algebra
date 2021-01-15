@@ -3,9 +3,9 @@ import operator
 from plum import Dispatcher, Self
 
 from .. import _dispatch
-from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
 from ..algebra import new, proven
-from ..util import to_tensor, squeeze, tuple_equal, broadcast
+from ..function import Function, OneFunction, ZeroFunction, WrappedFunction
+from ..util import to_tensor, squeeze, broadcast, identical
 
 __all__ = ["ShiftedFunction"]
 
@@ -30,7 +30,7 @@ class ShiftedFunction(WrappedFunction):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return self[0] == other[0] and tuple_equal(self.shifts, other.shifts)
+        return self[0] == other[0] and identical(self.shifts, other.shifts)
 
 
 @_dispatch(Function, [object])

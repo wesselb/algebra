@@ -29,9 +29,9 @@ class Sum(Join):
 
     @_dispatch(Self)
     def __eq__(self, other):
-        return (self[0] == other[0] and self[1] == other[1]) or (
-            self[0] == other[1] and self[1] == other[0]
-        )
+        way1 = self[0] == other[0] and self[1] == other[1]
+        way2 = self[0] == other[1] and self[1] == other[0]
+        return way1 or way2
 
 
 # Generic addition.
