@@ -1,6 +1,6 @@
-import operator
+from typing import Union
 
-from plum import Dispatcher, Self
+import operator
 
 from .. import _dispatch
 from ..algebra import new, proven
@@ -18,8 +18,6 @@ class ShiftedFunction(WrappedFunction):
         *shifts (tensor): Shift amounts.
     """
 
-    _dispatch = Dispatcher(in_class=Self)
-
     def __init__(self, e, *shifts):
         WrappedFunction.__init__(self, e)
         self.shifts = tuple(to_tensor(x) for x in shifts)
@@ -28,21 +26,21 @@ class ShiftedFunction(WrappedFunction):
         shifts = tuple(formatter(s) for s in self.shifts)
         return "{} shift {}".format(e, squeeze(shifts))
 
-    @_dispatch(Self)
-    def __eq__(self, other):
+    @_dispatch
+    def __eq__(self, other: "ShiftedFunction"):
         return self[0] == other[0] and identical(self.shifts, other.shifts)
 
 
-@_dispatch(Function, [object])
-def shift(a, *shifts):
+@_dispatch
+def shift(a: Function, *shifts):
     return new(a, ShiftedFunction)(a, *shifts)
 
 
-@_dispatch({ZeroFunction, OneFunction}, [object], precedence=proven())
-def shift(a, *shifts):
+@_dispatch(precedence=proven())
+def shift(a: Union[ZeroFunction, OneFunction], *shifts):
     return a
 
 
-@_dispatch(ShiftedFunction, [object], precedence=proven())
-def shift(a, *shifts):
+@_dispatch(precedence=proven())
+def shift(a: ShiftedFunction, *shifts):
     return shift(a[0], *broadcast(operator.add, a.shifts, shifts))

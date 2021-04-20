@@ -1,7 +1,5 @@
 from abc import ABCMeta, abstractmethod
 
-from plum import Dispatcher, Referentiable, Self
-
 from . import _dispatch
 from .util import get_subclasses
 
@@ -35,13 +33,11 @@ def proven():
     return _proven_level
 
 
-class Element(metaclass=Referentiable(ABCMeta)):
+class Element(metaclass=ABCMeta):
     """An element in a algebra.
 
     Elements can be added and multiplied.
     """
-
-    _dispatch = Dispatcher(in_class=Self)
 
     def __eq__(self, other):
         return self is other
@@ -67,8 +63,8 @@ class Element(metaclass=Referentiable(ABCMeta)):
     def __rsub__(self, other):
         return add(other, -self)
 
-    @_dispatch(int)
-    def __pow__(self, power, modulo=None):
+    @_dispatch
+    def __pow__(self, power: int, modulo=None):
         if power < 0:
             raise ValueError("Cannot raise to a negative power.")
         elif power == 0:
@@ -127,7 +123,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
     def __str__(self):
         return self.display()
 
-    @_dispatch(object)
+    @_dispatch
     def display(self, formatter):
         """Display the element.
 
@@ -139,7 +135,7 @@ class Element(metaclass=Referentiable(ABCMeta)):
         """
         return pretty_print(self, formatter)
 
-    @_dispatch()
+    @_dispatch
     def display(self):
         return self.display(lambda x: x)
 
@@ -162,26 +158,22 @@ class Element(metaclass=Referentiable(ABCMeta)):
 class One(Element):
     """The constant `1`."""
 
-    _dispatch = Dispatcher(in_class=Self)
-
     def render(self, formatter):
         return "1"
 
-    @_dispatch(Self)
-    def __eq__(self, other):
+    @_dispatch
+    def __eq__(self, other: "One"):
         return True
 
 
 class Zero(Element):
     """The constant `0`."""
 
-    _dispatch = Dispatcher(in_class=Self)
-
     def render(self, formatter):
         return "0"
 
-    @_dispatch(Self)
-    def __eq__(self, other):
+    @_dispatch
+    def __eq__(self, other: "Zero"):
         return True
 
 
@@ -191,8 +183,6 @@ class Wrapped(Element):
     Args:
         e (:class:`.algebra.Element`): Element to wrap.
     """
-
-    _dispatch = Dispatcher(in_class=Self)
 
     def __init__(self, e):
         self.e = e
@@ -216,8 +206,6 @@ class Join(Element):
         e2 (:class:`.algebra.Element`): Second element to wrap.
     """
 
-    _dispatch = Dispatcher(in_class=Self)
-
     def __init__(self, e1, e2):
         self.e1 = e1
         self.e2 = e2
@@ -235,8 +223,8 @@ class Join(Element):
         pass
 
 
-@_dispatch(Element, object)
-def pretty_print(el, formatter):
+@_dispatch
+def pretty_print(el: Element, formatter):
     """Pretty print an element with a minimal number of parentheses.
 
     Args:
@@ -249,7 +237,7 @@ def pretty_print(el, formatter):
     return el.render(formatter)
 
 
-@_dispatch(object, object)
+@_dispatch
 def add(a, b):
     """Add two elements.
 
@@ -266,7 +254,7 @@ def add(a, b):
     )
 
 
-@_dispatch(object, object)
+@_dispatch
 def mul(a, b):
     """Multiply two elements.
 
@@ -283,7 +271,7 @@ def mul(a, b):
     )
 
 
-@_dispatch(object)
+@_dispatch
 def get_algebra(a):
     """Get the algebra of an element.
 
@@ -297,8 +285,8 @@ def get_algebra(a):
 
 
 # Register the default algebra.
-@_dispatch(Element)
-def get_algebra(a):
+@_dispatch
+def get_algebra(a: Element):
     return Element
 
 

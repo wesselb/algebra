@@ -161,7 +161,9 @@ def test_new():
     class SumKernel(Kernel, Sum):
         pass
 
-    get_algebra.extend(Kernel)(lambda _: Kernel)
+    @get_algebra.dispatch
+    def _get_algebra(e: Kernel):
+        return Kernel
 
     # Test that the algebra is correctly registered.
     assert get_algebra(SumKernel(Kernel(), Kernel())) == Kernel

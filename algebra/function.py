@@ -1,9 +1,7 @@
-from plum import Dispatcher, Self
-
 from . import _dispatch
+from .algebra import Element, One, Zero, Wrapped, Join
 from .ops.add import Sum
 from .ops.mul import Scaled, Product
-from .algebra import Element, One, Zero, Wrapped, Join
 
 __all__ = [
     "Function",
@@ -25,8 +23,6 @@ __all__ = [
 
 class Function(Element):
     """A elements."""
-
-    _dispatch = Dispatcher(in_class=Self)
 
     def stretch(self, *stretches):
         """Stretch the elements.
@@ -103,8 +99,8 @@ class Function(Element):
 
 
 # Register the algebra.
-@_dispatch(Function)
-def get_algebra(a):
+@_dispatch
+def get_algebra(a: Function):
     return Function
 
 
@@ -136,7 +132,7 @@ class ProductFunction(Function, Product):
     """A product of two functions."""
 
 
-@_dispatch(object, [object])
+@_dispatch
 def stretch(a, *stretches):
     """Stretch a elements.
 
@@ -150,7 +146,7 @@ def stretch(a, *stretches):
     raise NotImplementedError(f'Stretching not implemented for "{type(a).__name__}".')
 
 
-@_dispatch(object, [object])
+@_dispatch
 def shift(a, *shifts):
     """Shift a elements.
 
@@ -164,7 +160,7 @@ def shift(a, *shifts):
     raise NotImplementedError(f'Shifting not implemented for "{type(a).__name__}".')
 
 
-@_dispatch(object, [object])
+@_dispatch
 def select(a, *dims):
     """Select dimensions from the inputs.
 
@@ -180,7 +176,7 @@ def select(a, *dims):
     raise NotImplementedError(f'Selection not implemented for "{type(a).__name__}".')
 
 
-@_dispatch(object, [object])
+@_dispatch
 def transform(a, *fs):
     """Transform the inputs of a elements.
 
@@ -198,7 +194,7 @@ def transform(a, *fs):
     )
 
 
-@_dispatch(object, [object])
+@_dispatch
 def diff(a, *derivs):
     """Differentiate a elements.
 
@@ -216,7 +212,7 @@ def diff(a, *derivs):
     )
 
 
-@_dispatch(object)
+@_dispatch
 def reverse(a):
     """Reverse argument of a elements.
 

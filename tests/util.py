@@ -1,22 +1,19 @@
-from numpy.testing import assert_allclose, assert_array_almost_equal
-from plum import Dispatcher, Self
+from numpy.testing import assert_allclose
+from plum import dispatch
 
 from algebra import Element
 
-__all__ = ["allclose", "approx", "a", "b", "c"]
+__all__ = ["approx", "a", "b", "c"]
 
-allclose = assert_allclose
-approx = assert_array_almost_equal
+approx = assert_allclose
 
 
 # Some extra atomic elements to test with:
 
 
 class A(Element):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
+    @dispatch
+    def __eq__(self, other: "A"):
         return True
 
     def render(self, formatter):
@@ -27,10 +24,8 @@ a = A()
 
 
 class B(Element):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
+    @dispatch
+    def __eq__(self, other: "B"):
         return True
 
     def render(self, formatter):
@@ -41,10 +36,8 @@ b = B()
 
 
 class C(Element):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
+    @dispatch
+    def __eq__(self, other: "C"):
         return True
 
     def render(self, formatter):

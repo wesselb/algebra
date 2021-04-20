@@ -1,3 +1,5 @@
+from typing import Union
+
 import lab as B
 from plum import Dispatcher
 
@@ -27,9 +29,8 @@ def get_subclasses(c):
     Returns:
         list[type]: List of subclasses of `c`.
     """
-    return c.__subclasses__() + [
-        x for sc in c.__subclasses__() for x in get_subclasses(sc)
-    ]
+    scs = c.__subclasses__()
+    return scs + [x for sc in scs for x in get_subclasses(sc)]
 
 
 def broadcast(op, xs, ys):
@@ -61,7 +62,7 @@ def broadcast(op, xs, ys):
     return tuple(op(x, y) for x, y in zip(xs, ys))
 
 
-@_dispatch(object, object)
+@_dispatch
 def identical(x, y):
     """Check if two objects `x` are `y` are identical for the purpose of algebraic
     simplification.
@@ -76,18 +77,18 @@ def identical(x, y):
     return x is y
 
 
-@_dispatch({int, float}, {int, float})
-def identical(x, y):
+@_dispatch
+def identical(x: Union[int, float], y: Union[int, float]):
     return x == y
 
 
 @_dispatch.multi((tuple, tuple), (list, list))
-def identical(x, y):
+def identical(x: Union[tuple, list], y: Union[tuple, list]):
     return len(x) == len(y) and all([identical(xi, yi) for xi, yi in zip(x, y)])
 
 
-@_dispatch(B.Numeric)
-def to_tensor(x):
+@_dispatch
+def to_tensor(x: B.Numeric):
     """Convert object to tensor.
 
     Args:
@@ -99,6 +100,6 @@ def to_tensor(x):
     return x
 
 
-@_dispatch({tuple, list})
-def to_tensor(x):
+@_dispatch
+def to_tensor(x: Union[tuple, list]):
     return B.stack(*x, axis=0)

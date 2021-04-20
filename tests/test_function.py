@@ -1,5 +1,5 @@
 import pytest
-from plum import Self, Dispatcher
+from plum import dispatch
 
 from algebra import (
     Function,
@@ -17,10 +17,8 @@ from algebra import (
 
 
 class F(Function):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
+    @dispatch
+    def __eq__(self, other: "F"):
         return True
 
     def render(self, formatter):
@@ -28,10 +26,8 @@ class F(Function):
 
 
 class G(Function):
-    dispatch = Dispatcher(in_class=Self)
-
-    @dispatch(Self)
-    def __eq__(self, other):
+    @dispatch
+    def __eq__(self, other: "G"):
         return True
 
     def render(self, formatter):
