@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-requirements = ["numpy>=1.16", "plum-dispatch", "backends"]
+requirements = ["numpy>=1.16", "plum-dispatch>=1", "backends>=1"]
 
 setup(
     packages=find_packages(exclude=["docs"]),
