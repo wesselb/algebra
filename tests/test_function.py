@@ -56,7 +56,6 @@ def test_stretch():
 
     assert str(f.stretch(5)) == "f > 5"
     assert str(f.stretch(5, 6)) == "f > (5, 6)"
-    assert str(f > 5) == "f > 5"
 
     check_equality(f.stretch, g.stretch, 4, 5)
 

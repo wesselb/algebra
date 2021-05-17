@@ -35,10 +35,6 @@ class Function(Element):
         """
         return stretch(self, *stretches)
 
-    def __gt__(self, stretch):
-        """Shorthand for :meth:`.elements.Function.stretch`."""
-        return self.stretch(stretch)
-
     def shift(self, *amounts):
         """Shift the inputs of an elements by a certain amount.
 

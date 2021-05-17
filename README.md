@@ -5,19 +5,17 @@
 [![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://user.github.io/algebra)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-
 Algebraic structures
 
 *Note:* Algebra requires Python 3.6 or higher.
 
 ## Requirements and Installation
 
-See [the instructions here](https://gist.github.com/wesselb/4b44bf87f3789425f96e26c4308d0adc).
-Then simply
-
 ```bash
 pip install algebra
 ```
+
+See also [the instructions here](https://gist.github.com/wesselb/4b44bf87f3789425f96e26c4308d0adc).
 
 ## Algebra
 
