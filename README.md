@@ -1,7 +1,7 @@
 # [Algebra](http://github.com/wesselb/algebra)
 
 [![CI](https://github.com/wesselb/algebra/workflows/CI/badge.svg?branch=master)](https://github.com/wesselb/algebra/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/github/wesselb/algebra/badge.svg?branch=master&service=github)](https://coveralls.io/github/wesselb/algebra?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/wesselb/algebra/badge.svg?branch=master)](https://coveralls.io/github/wesselb/algebra?branch=master)
 [![Latest Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://user.github.io/algebra)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
