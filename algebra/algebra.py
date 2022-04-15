@@ -313,6 +313,18 @@ def new(a, t):
         element_types = {t} | set(get_subclasses(t))
         candidates = list(algebra_types & element_types)
 
+        # Reject concrete parametric types.
+        candidates = [
+            c
+            for c in candidates
+            if not (
+                hasattr(c, "parametric")
+                and c.parametric
+                and hasattr(c, "concrete")
+                and c.concrete
+            )
+        ]
+
         # The most specific types are the ones we are looking for.
         candidates = filter_most_specific(candidates)
 
