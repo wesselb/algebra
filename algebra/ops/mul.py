@@ -65,9 +65,9 @@ class Product(Join):
 
 @_dispatch
 def mul(a: Element, b):
-    if b is 0:
+    if identical(b, 0):
         return new(a, Zero)()
-    elif b is 1:
+    elif identical(b, 1):
         return a
     else:
         return new(a, Scaled)(a, b)

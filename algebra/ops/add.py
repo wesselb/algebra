@@ -1,6 +1,7 @@
 from .mul import mul, Scaled
 from .. import _dispatch
 from ..algebra import proven, new, Element, Zero, One, Join
+from ..util import identical
 
 __all__ = ["Sum"]
 
@@ -35,7 +36,7 @@ class Sum(Join):
 
 @_dispatch
 def add(a: Element, b):
-    if b is 0:
+    if identical(b, 0):
         return a
     else:
         return add(a, mul(b, new(a, One)()))
@@ -43,7 +44,7 @@ def add(a: Element, b):
 
 @_dispatch
 def add(a, b: Element):
-    if a is 0:
+    if identical(a, 0):
         return b
     else:
         return add(mul(a, new(b, One)()), b)
@@ -62,7 +63,7 @@ def add(a: Element, b: Element):
 
 @_dispatch(precedence=proven())
 def add(a: Zero, b):
-    if b is 0:
+    if identical(b, 0):
         return a
     else:
         return mul(new(a, One)(), b)
@@ -70,7 +71,7 @@ def add(a: Zero, b):
 
 @_dispatch(precedence=proven())
 def add(a, b: Zero):
-    if a is 0:
+    if identical(a, 0):
         return b
     else:
         return mul(a, new(b, One)())
